@@ -1,5 +1,8 @@
 package com.andresimiquelli.finalfinance.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.andresimiquelli.finalfinance.entities.User;
 
 public class UserDTO {
@@ -8,6 +11,8 @@ public class UserDTO {
 	private String name;
 	private String email;
 	private Integer status;
+	
+	private List<WalletDTO> wallets = new ArrayList<WalletDTO>();
 	
 	public UserDTO() {}
 
@@ -19,12 +24,12 @@ public class UserDTO {
 		this.status = status;
 	}
 	
-	public UserDTO(User user) {
-	
+	public UserDTO(User user) {	
 		id = user.getId();
 		name = user.getName();
 		email = user.getEmail();
 		status = user.getStatus();
+		wallets = user.getWallets().stream().map(item -> new WalletDTO(item)).toList();
 	}
 
 	public Integer getId() {
@@ -57,6 +62,14 @@ public class UserDTO {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public List<WalletDTO> getWallets() {
+		return wallets;
+	}
+
+	public void setWallets(List<WalletDTO> wallets) {
+		this.wallets = wallets;
 	}
 
 }

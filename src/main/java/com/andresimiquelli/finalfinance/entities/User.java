@@ -1,18 +1,22 @@
 package com.andresimiquelli.finalfinance.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "users")
 public class User implements Serializable{
-
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -22,6 +26,10 @@ public class User implements Serializable{
 	private String email;
 	private String password;
 	private Integer status;
+	
+	@JsonManagedReference
+	@OneToMany(mappedBy = "user")
+	private List<Wallet> wallets = new ArrayList<Wallet>();
 	
 	public User() {}
 
@@ -72,6 +80,14 @@ public class User implements Serializable{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+	
+	public List<Wallet> getWallets() {
+		return wallets;
+	}
+
+	public void setWallets(List<Wallet> wallets) {
+		this.wallets = wallets;
+	}
 
 	@Override
 	public int hashCode() {
@@ -89,6 +105,5 @@ public class User implements Serializable{
 		User other = (User) obj;
 		return Objects.equals(id, other.id);
 	}
-	
 	
 }

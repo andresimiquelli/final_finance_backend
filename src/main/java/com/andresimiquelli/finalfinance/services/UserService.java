@@ -1,5 +1,7 @@
 package com.andresimiquelli.finalfinance.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.andresimiquelli.finalfinance.dto.UserDTO;
 import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.repositories.UserRepository;
+import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
@@ -25,8 +28,8 @@ public class UserService {
 	
 	@Transactional(readOnly = true)
 	public UserDTO findById(Integer id){
-		User result = repository.findById(id).get();
-		UserDTO dto = new UserDTO(result);
-		return dto;
+		Optional<User> obj = repository.findById(id);
+		User user = obj.orElseThrow(() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+User.class.getName()));
+		return new UserDTO(user);
 	}
 }

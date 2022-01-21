@@ -1,5 +1,8 @@
 package com.andresimiquelli.finalfinance.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.andresimiquelli.finalfinance.entities.Period;
 
 public class PeriodDTO {
@@ -9,6 +12,8 @@ public class PeriodDTO {
 	private Integer month;
 	private Double leftover;
 	private Integer status;
+	
+	private List<EntryDTO> entries = new ArrayList<EntryDTO>();
 	
 	public PeriodDTO() {}
 
@@ -27,6 +32,7 @@ public class PeriodDTO {
 		month = period.getMonth();
 		leftover = period.getLeftover();
 		status = period.getStatus();
+		entries = period.getEntries().stream().map(item -> new EntryDTO(item)).toList();
 	}
 
 	public Integer getId() {
@@ -67,6 +73,14 @@ public class PeriodDTO {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public List<EntryDTO> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<EntryDTO> entries) {
+		this.entries = entries;
 	}
 	
 }

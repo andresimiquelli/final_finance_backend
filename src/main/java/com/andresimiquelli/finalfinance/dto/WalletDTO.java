@@ -1,5 +1,8 @@
 package com.andresimiquelli.finalfinance.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.andresimiquelli.finalfinance.entities.Wallet;
 
 public class WalletDTO {
@@ -7,6 +10,8 @@ public class WalletDTO {
 	private Integer id;
 	private String name;
 	private String description;
+	
+	private List<PeriodDTO> periods = new ArrayList<PeriodDTO>();
 	
 	public WalletDTO() {}
 
@@ -21,6 +26,7 @@ public class WalletDTO {
 		id = wallet.getId();
 		name = wallet.getName();
 		description = wallet.getDescription();
+		periods = wallet.getPeriods().stream().map(item -> new PeriodDTO(item)).toList();
 	}
 
 	public Integer getId() {
@@ -45,5 +51,13 @@ public class WalletDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<PeriodDTO> getPeriods() {
+		return periods;
+	}
+
+	public void setPeriods(List<PeriodDTO> periods) {
+		this.periods = periods;
 	}
 }

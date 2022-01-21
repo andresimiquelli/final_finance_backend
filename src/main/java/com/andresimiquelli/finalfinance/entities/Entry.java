@@ -8,10 +8,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "entries")
@@ -31,6 +36,16 @@ public class Entry implements Serializable {
 	private Date created_at;
 	@UpdateTimestamp
 	private Date updated_at;
+	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "period_id")
+	private Period period;
+	
+	@JsonManagedReference
+	@ManyToOne
+	@JoinColumn(name = "group_id")
+	private Group group;
 	
 	public Entry() {}
 	
@@ -107,7 +122,23 @@ public class Entry implements Serializable {
 	public void setUpdated_at(Date updated_at) {
 		this.updated_at = updated_at;
 	}
+	
+	public Period getPeriod() {
+		return period;
+	}
 
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+	
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

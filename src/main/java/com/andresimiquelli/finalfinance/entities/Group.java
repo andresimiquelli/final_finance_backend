@@ -1,13 +1,18 @@
 package com.andresimiquelli.finalfinance.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "groups")
@@ -19,6 +24,10 @@ public class Group implements Serializable{
 	private Integer id;
 	private String name;
 	private String color;
+	
+	@JsonBackReference
+	@OneToMany(mappedBy = "group")
+	private List<Entry> entries = new ArrayList<Entry>();
 	
 	public Group() {}
 
@@ -52,6 +61,14 @@ public class Group implements Serializable{
 	public void setColor(String color) {
 		this.color = color;
 	}
+	
+	public List<Entry> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<Entry> entries) {
+		this.entries = entries;
+	}
 
 	@Override
 	public int hashCode() {
@@ -69,4 +86,5 @@ public class Group implements Serializable{
 		Group other = (Group) obj;
 		return Objects.equals(id, other.id);
 	}
+
 }

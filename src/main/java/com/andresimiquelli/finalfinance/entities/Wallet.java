@@ -1,6 +1,8 @@
 package com.andresimiquelli.finalfinance.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -9,9 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "wallets")
@@ -28,6 +32,10 @@ public class Wallet implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+	
+	@JsonManagedReference
+	@OneToMany(mappedBy = "wallet")
+	private List<Period> periods = new ArrayList<Period>();
 	
 	public Wallet() {}
 
@@ -69,7 +77,15 @@ public class Wallet implements Serializable{
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	public List<Period> getPeriods() {
+		return periods;
+	}
 
+	public void setPeriods(List<Period> periods) {
+		this.periods = periods;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

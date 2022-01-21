@@ -1,13 +1,22 @@
 package com.andresimiquelli.finalfinance.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 @Entity
 @Table(name = "periods")
@@ -21,6 +30,15 @@ public class Period implements Serializable{
 	private Integer month;
 	private Double leftover;
 	private Integer status;
+	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "wallet_id")
+	private Wallet wallet;
+	
+	@JsonManagedReference
+	@OneToMany(mappedBy = "period")
+	private List<Entry> entries = new ArrayList<Entry>();
 	
 	public Period() {}
 
@@ -70,6 +88,22 @@ public class Period implements Serializable{
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+	
+	public Wallet getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
+	}
+	
+	public List<Entry> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<Entry> entries) {
+		this.entries = entries;
 	}
 
 	@Override

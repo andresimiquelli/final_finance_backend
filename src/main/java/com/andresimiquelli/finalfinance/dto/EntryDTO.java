@@ -15,6 +15,8 @@ public class EntryDTO {
 	private Date created_at;
 	private Date updated_at;
 	
+	private GroupDTO group;
+	
 	public EntryDTO() {}
 
 	public EntryDTO(Integer id, Character type, Double amount, String title, String description, Integer status) {
@@ -27,14 +29,15 @@ public class EntryDTO {
 	}
 	
 	public EntryDTO(Entry entry) {
-		this.id = entry.getId();
-		this.type = entry.getType();
-		this.amount = entry.getAmount();
-		this.title = entry.getTitle();
-		this.description = entry.getDescription();
-		this.status = entry.getStatus();
+		id = entry.getId();
+		type = entry.getType();
+		amount = entry.getAmount();
+		title = entry.getTitle();
+		description = entry.getDescription();
+		status = entry.getStatus();
 		this.setCreated_at(entry.getCreated_at());
 		this.setUpdated_at(entry.getUpdated_at());
+		group = new GroupDTO(entry.getGroup());
 	}
 
 	public Integer getId() {
@@ -100,4 +103,13 @@ public class EntryDTO {
 	public void setUpdated_at(Date updated_at) {
 		this.updated_at = updated_at;
 	}
+
+	public GroupDTO getGroup() {
+		return group;
+	}
+
+	public void setGroup(GroupDTO group) {
+		this.group = group;
+	}
+
 }

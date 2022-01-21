@@ -13,12 +13,12 @@ insert into groups(name, color) values('Nubank','#4B0082');
 insert into periods(wallet_id,year,month,leftover,status) values(1,2022,1,300.5,1);
 insert into periods(wallet_id,year,month,leftover,status) values(1,2022,2,0,0);
 
-insert into recurrences(type,title,description,amount,status) values('c','Salário','Referente a 32 aulas',3500,1);
-insert into recurrences(type,title,description,amount,status) values('c','Winner','Referente a 72 horas',2500,1);
-insert into recurrences(type,title,description,amount,status) values('d','Internet','Acesse',69.9,1);
-insert into recurrences(type,title,description,amount,status) values('d','Luz','Cemig',100,1);
+insert into recurrences(type,title,description,amount,status) values(1,'Salário','Referente a 32 aulas',3500,1);
+insert into recurrences(type,title,description,amount,status) values(1,'Winner','Referente a 72 horas',2500,1);
+insert into recurrences(type,title,description,amount,status) values(2,'Internet','Acesse',69.9,1);
+insert into recurrences(type,title,description,amount,status) values(2,'Luz','Cemig',100,1);
 
-insert into entries(period_id,group_id,type,title,description,amount,status) values(1,1,'c','Salário','Referente a 32 aulas',3500,1);
-insert into entries(period_id,group_id,type,title,description,amount,status) values(1,1,'c','Winner','Referente a 72 horas',2500,1);
-insert into entries(period_id,group_id,type,title,description,amount,status) values(1,2,'d','Internet','Acesse',69.9,1);
-insert into entries(period_id,group_id,type,title,description,amount,status) values(1,3,'d','Luz','Cemig',100,1);
+insert into entries(period_id,group_id,type,title,description,amount,status) values(1,1,1,'Salário','Referente a 32 aulas',3500,1);
+insert into entries(period_id,group_id,type,title,description,amount,status) values(1,1,1,'Winner','Referente a 72 horas',2500,1);
+insert into entries(period_id,group_id,type,title,description,amount,status) values(1,2,2,'Internet','Acesse',69.9,1);
+insert into entries(period_id,group_id,type,title,description,amount,status) values(1,3,2,'Luz','Cemig',100,1);

@@ -1,11 +1,12 @@
 package com.andresimiquelli.finalfinance.dto;
 
 import com.andresimiquelli.finalfinance.entities.Recurrency;
+import com.andresimiquelli.finalfinance.entities.enums.EntryType;
 
 public class RecurrencyDTO {
 	
 	private Integer id;
-	private Character type;
+	private EntryType type;
 	private Double amount;
 	private String title;
 	private String description;
@@ -13,7 +14,7 @@ public class RecurrencyDTO {
 	
 	public RecurrencyDTO() {}
 
-	public RecurrencyDTO(Integer id, Character type, Double amount, String title, String description, Integer status) {
+	public RecurrencyDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
 		this.id = id;
 		this.type = type;
 		this.amount = amount;
@@ -39,11 +40,11 @@ public class RecurrencyDTO {
 		this.id = id;
 	}
 
-	public Character getType() {
+	public EntryType getType() {
 		return type;
 	}
 
-	public void setType(Character type) {
+	public void setType(EntryType type) {
 		this.type = type;
 	}
 

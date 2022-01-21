@@ -3,11 +3,12 @@ package com.andresimiquelli.finalfinance.dto;
 import java.util.Date;
 
 import com.andresimiquelli.finalfinance.entities.Entry;
+import com.andresimiquelli.finalfinance.entities.enums.EntryType;
 
 public class EntryDTO {
 	
 	private Integer id;
-	private Character type;
+	private EntryType type;
 	private Double amount;
 	private String title;
 	private String description;
@@ -19,7 +20,7 @@ public class EntryDTO {
 	
 	public EntryDTO() {}
 
-	public EntryDTO(Integer id, Character type, Double amount, String title, String description, Integer status) {
+	public EntryDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
 		this.id = id;
 		this.type = type;
 		this.amount = amount;
@@ -48,11 +49,11 @@ public class EntryDTO {
 		this.id = id;
 	}
 
-	public Character getType() {
+	public EntryType getType() {
 		return type;
 	}
 
-	public void setType(Character type) {
+	public void setType(EntryType type) {
 		this.type = type;
 	}
 

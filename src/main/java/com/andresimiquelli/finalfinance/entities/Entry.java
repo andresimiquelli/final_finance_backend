@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.andresimiquelli.finalfinance.entities.enums.EntryType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -26,7 +27,7 @@ public class Entry implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private Character type;
+	private Integer type;
 	private Double amount;
 	private String title;
 	private String description;
@@ -49,10 +50,10 @@ public class Entry implements Serializable {
 	
 	public Entry() {}
 	
-	public Entry(Integer id, Character type, Double amount, String title, String description, Integer status) {
+	public Entry(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
 		super();
 		this.id = id;
-		this.type = type;
+		this.type = type.getCode();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
@@ -67,12 +68,12 @@ public class Entry implements Serializable {
 		this.id = id;
 	}
 
-	public Character getType() {
-		return type;
+	public EntryType getType() {
+		return EntryType.toEnum(type);
 	}
 
-	public void setType(Character type) {
-		this.type = type;
+	public void setType(EntryType type) {
+		this.type = type.getCode();
 	}
 
 	public Double getAmount() {

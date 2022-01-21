@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.andresimiquelli.finalfinance.entities.enums.EntryType;
+
 @Entity
 @Table(name = "recurrences")
 public class Recurrency implements Serializable{
@@ -17,7 +19,7 @@ public class Recurrency implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private Character type;
+	private Integer type;
 	private Double amount;
 	private String title;
 	private String description;
@@ -25,9 +27,9 @@ public class Recurrency implements Serializable{
 	
 	public Recurrency() {}
 
-	public Recurrency(Integer id, Character type, Double amount, String title, String description, Integer status) {
+	public Recurrency(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
 		this.id = id;
-		this.type = type;
+		this.type = type.getCode();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
@@ -42,12 +44,12 @@ public class Recurrency implements Serializable{
 		this.id = id;
 	}
 
-	public Character getType() {
-		return type;
+	public EntryType getType() {
+		return EntryType.toEnum(type);
 	}
 
-	public void setType(Character type) {
-		this.type = type;
+	public void setType(EntryType type) {
+		this.type = type.getCode();
 	}
 
 	public Double getAmount() {

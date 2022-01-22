@@ -2,6 +2,8 @@ package com.andresimiquelli.finalfinance.controllers;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.andresimiquelli.finalfinance.dto.UserDTO;
+import com.andresimiquelli.finalfinance.dto.UserPostDTO;
 import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.services.UserService;
 
@@ -39,11 +42,11 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> insert(@RequestBody UserDTO user) {
+	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserPostDTO user) {
 		User obj = service.fromDTO(user);
-		user = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(user.getId()).toUri();
-		return ResponseEntity.created(uri).body(user);
+		UserDTO newUSer = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(newUSer.getId()).toUri();
+		return ResponseEntity.created(uri).body(newUSer);
 	}
 	
 	@PatchMapping(value = "/{id}")

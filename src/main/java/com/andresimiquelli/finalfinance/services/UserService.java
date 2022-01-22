@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.andresimiquelli.finalfinance.dto.UserDTO;
+import com.andresimiquelli.finalfinance.dto.UserPostDTO;
 import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 import com.andresimiquelli.finalfinance.repositories.UserRepository;
@@ -57,6 +58,10 @@ public class UserService {
 	
 	public User fromDTO(UserDTO dto) {
 		return new User(dto.getId(), dto.getName(), dto.getEmail(), dto.getPassword(), dto.getStatus().getCod());
+	}
+	
+	public User fromDTO(UserPostDTO dto) {
+		return new User(null, dto.getName(), dto.getEmail(), dto.getPassword(), UserStatus.ACTIVE.getCod());
 	}
 	
 	public User fromDTO(UserDTO dto, UserDTO user ) {

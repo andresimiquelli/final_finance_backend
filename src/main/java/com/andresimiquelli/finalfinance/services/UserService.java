@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.andresimiquelli.finalfinance.dto.UserDTO;
 import com.andresimiquelli.finalfinance.dto.UserPostDTO;
+import com.andresimiquelli.finalfinance.dto.UserPutDTO;
 import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 import com.andresimiquelli.finalfinance.repositories.UserRepository;
@@ -37,16 +38,19 @@ public class UserService {
 	}
 	
 	@Transactional
-	public UserDTO insert(User user) {
-		user.setStatus(UserStatus.ACTIVE);
-		User obj = repository.save(user);
-		return new UserDTO(obj);
+	public UserDTO insert(UserPostDTO user) {
+		User newUser = fromDTO(user);
+		newUser = repository.save(newUser);
+		return new UserDTO(newUser);
 	}
 	
 	@Transactional
-	public UserDTO update(Integer id, User user) {
-		user = repository.save(user);
-		return new UserDTO(user);
+	public UserDTO update(Integer id, UserPutDTO user) {
+		User newUser = fromDTO(user);
+		User existing = fromDTO(findById(id));
+		newUser = updateData(existing, newUser);
+		newUser = repository.save(newUser);
+		return new UserDTO(newUser);
 	}
 	
 	@Transactional
@@ -57,23 +61,39 @@ public class UserService {
 	}
 	
 	public User fromDTO(UserDTO dto) {
-		return new User(dto.getId(), dto.getName(), dto.getEmail(), dto.getPassword(), dto.getStatus().getCod());
+		return new User(
+				dto.getId(), 
+				dto.getName(), 
+				dto.getEmail(), 
+				dto.getPassword(), 
+				dto.getStatus()==null? null : dto.getStatus().getCod());
 	}
 	
 	public User fromDTO(UserPostDTO dto) {
 		return new User(null, dto.getName(), dto.getEmail(), dto.getPassword(), UserStatus.ACTIVE.getCod());
 	}
 	
-	public User fromDTO(UserDTO dto, UserDTO user ) {
-		if(dto.getName() != null)
-			user.setName(dto.getName());
-		if(dto.getEmail() != null)
-			user.setEmail(dto.getEmail());
-		if(dto.getPassword() != null)
-			user.setPassword(dto.getPassword());
-		if(dto.getStatus() != null)
-			user.setStatus(dto.getStatus());
+	public User fromDTO(UserPutDTO dto) {
+		User user = new User();
+		user.setName(dto.getName());
+		user.setPassword(dto.getPassword());
+		user.setStatus(dto.getStatus());
+		return user;
+	}
+	
+	public User updateData(User existing, User user ) {
+		if(user.getName() != null)
+			existing.setName(user.getName());
 		
-		return fromDTO(user);
+		if(user.getEmail() != null)
+			existing.setEmail(user.getEmail());
+		
+		if(user.getPassword() != null)
+			existing.setPassword(user.getPassword());
+		
+		if(user.getStatus() != null)
+			existing.setStatus(user.getStatus());
+		
+		return existing;
 	}
 }

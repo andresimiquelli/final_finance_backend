@@ -27,9 +27,6 @@ public class UserPostDTO implements Serializable{
 	@NotEmpty(message = "Password is required")
 	@Length(min = 6, max = 32)
 	private String password;
-	
-	@NotEmpty(message = "Password confirmation is required")
-	@Length(min = 6, max = 32)
 	private String passwordConfirmation;
 	
 	public UserPostDTO() {}

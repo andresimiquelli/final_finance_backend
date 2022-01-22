@@ -79,7 +79,8 @@ public class User implements Serializable{
 	}
 
 	public void setStatus(UserStatus status) {
-		this.status = status.getCod();
+		if(status != null)
+			this.status = status.getCod();
 	}
 	
 	public List<Wallet> getWallets() {

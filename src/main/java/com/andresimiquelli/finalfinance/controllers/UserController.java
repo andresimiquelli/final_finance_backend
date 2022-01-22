@@ -21,7 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.andresimiquelli.finalfinance.dto.UserDTO;
 import com.andresimiquelli.finalfinance.dto.UserPostDTO;
-import com.andresimiquelli.finalfinance.entities.User;
+import com.andresimiquelli.finalfinance.dto.UserPutDTO;
 import com.andresimiquelli.finalfinance.services.UserService;
 
 @RestController
@@ -43,19 +43,21 @@ public class UserController {
 	
 	@PostMapping
 	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserPostDTO user) {
-		User obj = service.fromDTO(user);
-		UserDTO newUSer = service.insert(obj);
+		UserDTO newUSer = service.insert(user);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(newUSer.getId()).toUri();
 		return ResponseEntity.created(uri).body(newUSer);
 	}
 	
-	@PatchMapping(value = "/{id}")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> update(@PathVariable Integer id, @RequestBody UserDTO user) {
-		UserDTO existing = service.findById(id);
-		User obj = service.fromDTO(user, existing);
-		user = service.update(id, obj);
-		return ResponseEntity.ok().body(user);
+	public ResponseEntity<UserDTO> update(@PathVariable Integer id,@Valid @RequestBody UserPutDTO user) {
+		UserDTO newUser = service.update(id, user);
+		return ResponseEntity.accepted().body(newUser);
+	}
+	
+	@PatchMapping(value = "/{id}")
+	public ResponseEntity<UserDTO> updatePatch(@PathVariable Integer id,@Valid @RequestBody UserPutDTO user) {
+		UserDTO newUser = service.update(id, user);
+		return ResponseEntity.accepted().body(newUser);
 	}
 	
 	@DeleteMapping(value = "/{id}")

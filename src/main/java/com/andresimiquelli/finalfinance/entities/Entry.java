@@ -48,9 +48,13 @@ public class Entry implements Serializable {
 	@JoinColumn(name = "group_id")
 	private Group group;
 	
+	@ManyToOne
+	@JoinColumn(name = "recurrency_id")
+	private Recurrency recurrency;
+	
 	public Entry() {}
 	
-	public Entry(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
+	public Entry(Integer id, EntryType type, Double amount, String title, String description, Integer status, Period period, Group group, Recurrency recurrency) {
 		super();
 		this.id = id;
 		this.type = type.getCode();
@@ -58,6 +62,9 @@ public class Entry implements Serializable {
 		this.title = title;
 		this.description = description;
 		this.status = status;
+		this.period = period;
+		this.group = group;
+		this.setRecurrency(recurrency);
 	}
 
 	public Integer getId() {
@@ -138,6 +145,14 @@ public class Entry implements Serializable {
 
 	public void setGroup(Group group) {
 		this.group = group;
+	}
+	
+	public Recurrency getRecurrency() {
+		return recurrency;
+	}
+
+	public void setRecurrency(Recurrency recurrency) {
+		this.recurrency = recurrency;
 	}
 	
 	@Override

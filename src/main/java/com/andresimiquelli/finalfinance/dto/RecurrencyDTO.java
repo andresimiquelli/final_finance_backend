@@ -12,24 +12,30 @@ public class RecurrencyDTO {
 	private String description;
 	private Integer status;
 	
+	private GroupDTO group;
+	
 	public RecurrencyDTO() {}
 
-	public RecurrencyDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
+	public RecurrencyDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status, GroupDTO group) {
 		this.id = id;
 		this.type = type;
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
 		this.status = status;
+		this.setGroup(group);
 	}
 	
 	public RecurrencyDTO(Recurrency recurrency) {
-		this.id = recurrency.getId();
-		this.type = recurrency.getType();
-		this.amount = recurrency.getAmount();
-		this.title = recurrency.getTitle();
-		this.description = recurrency.getDescription();
-		this.status = recurrency.getStatus();
+		id = recurrency.getId();
+		type = recurrency.getType();
+		amount = recurrency.getAmount();
+		title = recurrency.getTitle();
+		description = recurrency.getDescription();
+		status = recurrency.getStatus();
+		
+		if(recurrency.getGroup() != null)
+			setGroup(new GroupDTO(recurrency.getGroup()));
 	}
 
 	public Integer getId() {
@@ -78,6 +84,14 @@ public class RecurrencyDTO {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public GroupDTO getGroup() {
+		return group;
+	}
+
+	public void setGroup(GroupDTO group) {
+		this.group = group;
 	}
 	
 }

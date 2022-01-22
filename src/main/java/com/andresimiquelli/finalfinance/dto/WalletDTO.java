@@ -11,7 +11,8 @@ public class WalletDTO {
 	private String name;
 	private String description;
 	
-	private List<PeriodDTO> periods = new ArrayList<PeriodDTO>();
+	private List<GroupDTO> groups = new ArrayList<>();
+	private List<RecurrencyDTO> recurrences = new ArrayList<>();
 	
 	public WalletDTO() {}
 
@@ -26,7 +27,8 @@ public class WalletDTO {
 		id = wallet.getId();
 		name = wallet.getName();
 		description = wallet.getDescription();
-		periods = wallet.getPeriods().stream().map(item -> new PeriodDTO(item)).toList();
+		groups = wallet.getGroups().stream().map(item -> new GroupDTO(item)).toList();
+		recurrences = wallet.getRecurrences().stream().map(item -> new RecurrencyDTO(item)).toList();
 	}
 
 	public Integer getId() {
@@ -53,11 +55,19 @@ public class WalletDTO {
 		this.description = description;
 	}
 
-	public List<PeriodDTO> getPeriods() {
-		return periods;
+	public List<GroupDTO> getGroups() {
+		return groups;
 	}
 
-	public void setPeriods(List<PeriodDTO> periods) {
-		this.periods = periods;
+	public void setGroups(List<GroupDTO> groups) {
+		this.groups = groups;
+	}
+
+	public List<RecurrencyDTO> getRecurrences() {
+		return recurrences;
+	}
+
+	public void setRecurrences(List<RecurrencyDTO> recurrences) {
+		this.recurrences = recurrences;
 	}
 }

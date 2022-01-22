@@ -17,16 +17,19 @@ public class EntryDTO {
 	private Date updated_at;
 	
 	private GroupDTO group;
+	private RecurrencyDTO recurrency;
 	
 	public EntryDTO() {}
 
-	public EntryDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
+	public EntryDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status, GroupDTO group, RecurrencyDTO recurrency) {
 		this.id = id;
 		this.type = type;
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
 		this.status = status;
+		this.group = group;
+		this.setRecurrency(recurrency);
 	}
 	
 	public EntryDTO(Entry entry) {
@@ -38,7 +41,12 @@ public class EntryDTO {
 		status = entry.getStatus();
 		this.setCreated_at(entry.getCreated_at());
 		this.setUpdated_at(entry.getUpdated_at());
-		group = new GroupDTO(entry.getGroup());
+		
+		if(entry.getGroup() != null)
+			group = new GroupDTO(entry.getGroup());
+		
+		if(entry.getRecurrency() != null)
+			setRecurrency(new RecurrencyDTO(entry.getRecurrency()));
 	}
 
 	public Integer getId() {
@@ -111,6 +119,14 @@ public class EntryDTO {
 
 	public void setGroup(GroupDTO group) {
 		this.group = group;
+	}
+
+	public RecurrencyDTO getRecurrency() {
+		return recurrency;
+	}
+
+	public void setRecurrency(RecurrencyDTO recurrency) {
+		this.recurrency = recurrency;
 	}
 
 }

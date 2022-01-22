@@ -1,15 +1,14 @@
 package com.andresimiquelli.finalfinance.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -26,16 +25,18 @@ public class Group implements Serializable{
 	private String color;
 	
 	@JsonBackReference
-	@OneToMany(mappedBy = "group")
-	private List<Entry> entries = new ArrayList<Entry>();
+	@ManyToOne
+	@JoinColumn(name = "wallet_id")
+	private Wallet wallet;
 	
 	public Group() {}
 
-	public Group(Integer id, String name, String color) {
+	public Group(Integer id, String name, String color, Wallet wallet) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.color = color;
+		this.wallet = wallet;
 	}
 
 	public Integer getId() {
@@ -61,14 +62,6 @@ public class Group implements Serializable{
 	public void setColor(String color) {
 		this.color = color;
 	}
-	
-	public List<Entry> getEntries() {
-		return entries;
-	}
-
-	public void setEntries(List<Entry> entries) {
-		this.entries = entries;
-	}
 
 	@Override
 	public int hashCode() {
@@ -85,6 +78,14 @@ public class Group implements Serializable{
 			return false;
 		Group other = (Group) obj;
 		return Objects.equals(id, other.id);
+	}
+
+	public Wallet getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
 	}
 
 }

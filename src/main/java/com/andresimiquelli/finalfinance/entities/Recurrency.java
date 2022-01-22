@@ -7,9 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.andresimiquelli.finalfinance.entities.enums.EntryType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "recurrences")
@@ -25,15 +29,27 @@ public class Recurrency implements Serializable{
 	private String description;
 	private Integer status;
 	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "wallet_id")
+	private Wallet wallet;
+	
+	@JsonManagedReference
+	@ManyToOne
+	@JoinColumn(name = "group_id")
+	private Group group;
+	
 	public Recurrency() {}
 
-	public Recurrency(Integer id, EntryType type, Double amount, String title, String description, Integer status) {
+	public Recurrency(Integer id, EntryType type, Double amount, String title, String description, Integer status, Wallet wallet, Group group) {
 		this.id = id;
 		this.type = type.getCode();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
 		this.status = status;
+		this.wallet = wallet;
+		this.setGroup(group);
 	}
 
 	public Integer getId() {
@@ -82,6 +98,22 @@ public class Recurrency implements Serializable{
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+	
+	public Wallet getWallet() {
+		return wallet;
+	}
+
+	public void setWallet(Wallet wallet) {
+		this.wallet = wallet;
+	}
+	
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
 	}
 
 	@Override

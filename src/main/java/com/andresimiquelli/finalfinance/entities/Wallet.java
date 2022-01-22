@@ -35,7 +35,11 @@ public class Wallet implements Serializable{
 	
 	@JsonManagedReference
 	@OneToMany(mappedBy = "wallet")
-	private List<Period> periods = new ArrayList<Period>();
+	private List<Group> groups = new ArrayList<>();
+	
+	@JsonManagedReference
+	@OneToMany(mappedBy = "wallet")
+	private List<Recurrency> recurrences = new ArrayList<>();
 	
 	public Wallet() {}
 
@@ -78,12 +82,20 @@ public class Wallet implements Serializable{
 		this.user = user;
 	}
 	
-	public List<Period> getPeriods() {
-		return periods;
+	public List<Group> getGroups() {
+		return groups;
+	}
+	
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+	
+	public List<Recurrency> getRecurrences() {
+		return recurrences;
 	}
 
-	public void setPeriods(List<Period> periods) {
-		this.periods = periods;
+	public void setRecurrences(List<Recurrency> recurrences) {
+		this.recurrences = recurrences;
 	}
 	
 	@Override

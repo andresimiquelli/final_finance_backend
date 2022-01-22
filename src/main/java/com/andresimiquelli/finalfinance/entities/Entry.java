@@ -57,7 +57,7 @@ public class Entry implements Serializable {
 	public Entry(Integer id, EntryType type, Double amount, String title, String description, Integer status, Period period, Group group, Recurrency recurrency) {
 		super();
 		this.id = id;
-		this.type = type.getCode();
+		this.type = type.getCod();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
@@ -80,7 +80,7 @@ public class Entry implements Serializable {
 	}
 
 	public void setType(EntryType type) {
-		this.type = type.getCode();
+		this.type = type.getCod();
 	}
 
 	public Double getAmount() {

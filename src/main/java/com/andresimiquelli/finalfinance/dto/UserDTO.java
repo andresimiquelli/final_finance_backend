@@ -1,26 +1,30 @@
 package com.andresimiquelli.finalfinance.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.andresimiquelli.finalfinance.entities.User;
+import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 
-public class UserDTO {
-
+public class UserDTO implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String name;
 	private String email;
-	private Integer status;
+	private String password;
+	private UserStatus status;
 	
 	private List<WalletDTO> wallets = new ArrayList<WalletDTO>();
 	
 	public UserDTO() {}
 
-	public UserDTO(Integer id, String name, String email, Integer status) {
-
+	public UserDTO(Integer id, String name, String email, String password, UserStatus status) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
+		this.password = password;
 		this.status = status;
 	}
 	
@@ -28,6 +32,7 @@ public class UserDTO {
 		id = user.getId();
 		name = user.getName();
 		email = user.getEmail();
+		password = user.getPassword();
 		status = user.getStatus();
 		wallets = user.getWallets().stream().map(item -> new WalletDTO(item)).toList();
 	}
@@ -55,12 +60,20 @@ public class UserDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public String getPassword() {
+		return password;
+	}
 
-	public Integer getStatus() {
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public UserStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(UserStatus status) {
 		this.status = status;
 	}
 

@@ -43,7 +43,7 @@ public class Recurrency implements Serializable{
 
 	public Recurrency(Integer id, EntryType type, Double amount, String title, String description, Integer status, Wallet wallet, Group group) {
 		this.id = id;
-		this.type = type.getCode();
+		this.type = type.getCod();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
@@ -65,7 +65,7 @@ public class Recurrency implements Serializable{
 	}
 
 	public void setType(EntryType type) {
-		this.type = type.getCode();
+		this.type = type.getCod();
 	}
 
 	public Double getAmount() {

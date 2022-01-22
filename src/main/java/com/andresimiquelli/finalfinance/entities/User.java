@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -73,12 +74,12 @@ public class User implements Serializable{
 		this.password = password;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public UserStatus getStatus() {
+		return UserStatus.toEnum(status);
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setStatus(UserStatus status) {
+		this.status = status.getCod();
 	}
 	
 	public List<Wallet> getWallets() {

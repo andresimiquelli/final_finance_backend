@@ -1,32 +1,31 @@
 package com.andresimiquelli.finalfinance.entities.enums;
 
-public enum EntryType {
+public enum UserStatus {
 
-	CREDIT(1, "credit"),
-	DEBIT(2, "debit");
+	ACTIVE(1, "active"),
+	INACTIVE(0, "inactive");
 	
-	private int cod;
+	private Integer cod;
 	private String label;
 	
-	private EntryType(int cod, String label) {
+	private UserStatus(Integer cod, String label) {
 		this.cod = cod;
 		this.label = label;
 	}
 	
-	public int getCod() {
-		return this.cod;
+	public Integer getCod() {
+		return cod;
 	}
 	
 	public String getLabel() {
-		return this.label;
+		return label;
 	}
 	
-	public static EntryType toEnum(Integer cod) {
-		
+	public static UserStatus toEnum(Integer cod) {
 		if(cod == null)
 			return null;
 		
-		for(EntryType x : EntryType.values()) {
+		for(UserStatus x : UserStatus.values()) {
 			if(cod.equals(x.getCod()))
 				return x;
 		}

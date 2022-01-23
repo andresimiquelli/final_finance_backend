@@ -10,12 +10,15 @@ public class WalletPutDTO {
 	@Length(max = 256)
 	private String description;
 	
+	private Double leftover;
+	
 	public WalletPutDTO() {}
 	
-	public WalletPutDTO(@Length(min = 3, max = 191) String name, @Length(max = 256) String description) {
+	public WalletPutDTO(@Length(min = 3, max = 191) String name, @Length(max = 256) String description, Double leftover) {
 		super();
 		this.name = name;
 		this.description = description;
+		this.leftover = leftover;
 	}
 
 	public String getName() {
@@ -32,5 +35,13 @@ public class WalletPutDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Double getLeftover() {
+		return leftover;
+	}
+
+	public void setLeftover(Double leftover) {
+		this.leftover = leftover;
 	}
 }

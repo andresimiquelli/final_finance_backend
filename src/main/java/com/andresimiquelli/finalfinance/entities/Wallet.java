@@ -27,6 +27,7 @@ public class Wallet implements Serializable{
 	private Integer id;
 	private String name;
 	private String description;
+	private Double leftover;
 	
 	@JsonBackReference
 	@ManyToOne
@@ -43,11 +44,12 @@ public class Wallet implements Serializable{
 	
 	public Wallet() {}
 
-	public Wallet(Integer id, String name, String description, User user) {
+	public Wallet(Integer id, String name, String description, Double leftover, User user) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.leftover = leftover;
 		this.user = user;
 	}
 
@@ -73,6 +75,14 @@ public class Wallet implements Serializable{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public Double getLeftover() {
+		return leftover;
+	}
+	
+	public void setLeftover(Double leftover) {
+		this.leftover = leftover;
 	}
 	
 	public User getUser() {

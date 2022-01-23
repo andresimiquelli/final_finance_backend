@@ -3,8 +3,8 @@ insert into users(name,email,password,status) values ('Maria Valentina','mariava
 insert into users(name,email,password,status) values ('Alex Souza','alexsouza@gamil.com','123456',1);
 insert into users(name,email,password,status) values ('Cristiane Alencasr','cristiane@hotmail.com','123456',1);
 
-insert into wallets(user_id,name,description) values (1,'Pessoal','Carteira de contas pessoais');
-insert into wallets(user_id,name,description) values (1,'Trabalho','Carteira de contas de trabalho');
+insert into wallets(user_id,name,description,leftover) values (1,'Pessoal','Carteira de contas pessoais',1000.5);
+insert into wallets(user_id,name,description,leftover) values (1,'Trabalho','Carteira de contas de trabalho',2563.88);
 
 insert into groups(wallet_id,name, color) values(1,'Geral','#D3D3D3');
 insert into groups(wallet_id,name, color) values(1,'Itaú Card','#696969');

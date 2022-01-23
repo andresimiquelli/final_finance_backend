@@ -66,13 +66,13 @@ public class WalletService {
 			repository.deleteById(id);
 		}
 		catch(DataIntegrityViolationException e) {			
-			throw new DataIntegrityException("Deletion not possible. Wallet has registers associateds.");
+			throw new DataIntegrityException("Deletion not possible. Wallet has associated registers.");
 		}
 		
 	}
 	
 	public Wallet fromDTO(WalletDTO wallet) {
-		return new Wallet(wallet.getId(), wallet.getName(), wallet.getDescription(),null);
+		return new Wallet(wallet.getId(), wallet.getName(), wallet.getDescription(), wallet.getLeftover(), null);
 	}
 	
 	public Wallet fromDTO(WalletPostDTO wallet) {
@@ -81,12 +81,13 @@ public class WalletService {
 				null, 
 				wallet.getName(), 
 				wallet.getDescription(),
+				0.0,
 				user
 			);
 	}
 	
 	public Wallet fromDTO(WalletPutDTO wallet) {
-		return new Wallet(null, wallet.getName(), wallet.getDescription(), null);
+		return new Wallet(null, wallet.getName(), wallet.getDescription(), wallet.getLeftover(), null);
 	}
 	
 	private Wallet updateData(Wallet existing, Wallet newWallet) {
@@ -95,6 +96,9 @@ public class WalletService {
 		
 		if(newWallet.getDescription() != null)
 			existing.setDescription(newWallet.getDescription());
+		
+		if(newWallet.getLeftover() != null)
+			existing.setLeftover(newWallet.getLeftover());
 		
 		return existing;
 	}

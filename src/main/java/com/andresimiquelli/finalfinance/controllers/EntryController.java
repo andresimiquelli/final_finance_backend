@@ -26,7 +26,7 @@ import com.andresimiquelli.finalfinance.services.EntryService;
 
 @RestController
 @RequestMapping(value = "/entries")
-public class EntryConttoller {
+public class EntryController {
 
 	@Autowired
 	private EntryService service;
@@ -35,7 +35,7 @@ public class EntryConttoller {
 	public Page<EntryDTO> findAll(Pageable pageable){
 		return service.findAll(pageable);
 	}
-	
+
 	@GetMapping(value = "/{id}")
 	public EntryDTO findById(@PathVariable Integer id){
 		return service.findById(id);

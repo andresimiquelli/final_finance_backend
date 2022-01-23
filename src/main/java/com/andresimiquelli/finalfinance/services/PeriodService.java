@@ -17,6 +17,7 @@ import com.andresimiquelli.finalfinance.entities.Wallet;
 import com.andresimiquelli.finalfinance.entities.enums.PeriodStatus;
 import com.andresimiquelli.finalfinance.repositories.PeriodRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.services.events.PeriodEventPublisher;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -28,6 +29,9 @@ public class PeriodService {
 	
 	@Autowired
 	private WalletRepository walletRepository;
+	
+	@Autowired
+	private PeriodEventPublisher periodEvent;
 	
 	@Transactional(readOnly = true)
 	public Page<PeriodDTO> findAll(Pageable pageable){
@@ -46,7 +50,16 @@ public class PeriodService {
 	public PeriodDTO insert(PeriodPostDTO period) {
 		Period newPeriod = fromDTO(period);
 		newPeriod = repository.save(newPeriod);
+		periodEvent.publishPeriodCreatedEvent(newPeriod);
 		return new PeriodDTO(newPeriod);
+	}
+	
+	public void update(Integer id, PeriodPutDTO period) {
+		Period existing = getPeriod(id);
+		PeriodDTO previous = new PeriodDTO(existing);
+		Period newPeriod = updateData(existing, period);
+		repository.save(newPeriod);
+		periodEvent.publisherPeriodUpdatedEvent(newPeriod, previous);
 	}
 	
 	@Transactional
@@ -60,12 +73,6 @@ public class PeriodService {
 			throw new DataIntegrityException("Deletion is not possible. Period has associated registers.");
 		}
 		
-	}
-	
-	public void update(Integer id, PeriodPutDTO period) {
-		Period existing = getPeriod(id);
-		Period newPeriod = updateData(existing, period);
-		repository.save(newPeriod);
 	}
 
 	private Period updateData(Period existing, PeriodPutDTO newPeriod) {

@@ -19,6 +19,7 @@ import com.andresimiquelli.finalfinance.entities.enums.RecurrencyStatus;
 import com.andresimiquelli.finalfinance.repositories.GroupRepository;
 import com.andresimiquelli.finalfinance.repositories.RecurrencyRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.services.events.RecurrencyEventPublisher;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -34,6 +35,9 @@ public class RecurrencyService {
 	@Autowired
 	private GroupRepository groupRepository;
 	
+	@Autowired
+	private RecurrencyEventPublisher reccurencyPublisher;
+	
 	@Transactional(readOnly = true)
 	public Page<RecurrencyDTO> findAll(Pageable pageable){
 		Page<Recurrency> result = repository.findAll(pageable);
@@ -43,8 +47,7 @@ public class RecurrencyService {
 	
 	@Transactional(readOnly = true)
 	public RecurrencyDTO findById(Integer id){
-		Optional<Recurrency> obj = repository.findById(id);
-		Recurrency recurrency = obj.orElseThrow(() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Recurrency.class.getName()));
+		Recurrency recurrency = getRecurrency(id);
 		return new RecurrencyDTO(recurrency);
 	}
 	
@@ -52,24 +55,26 @@ public class RecurrencyService {
 	public RecurrencyDTO insert(RecurrencyPostDTO recurrency) {
 		Recurrency newRecurrency = fromDTO(recurrency);
 		newRecurrency = repository.save(newRecurrency);
+		reccurencyPublisher.publisherRecurrencyCreatedEvent(newRecurrency);
 		return new RecurrencyDTO(newRecurrency);
 	}
 	
 	@Transactional
 	public RecurrencyDTO update(Integer id, RecurrencyPutDTO recurrency) { 
-		Optional<Recurrency> optional = repository.findById(id);
-		Recurrency existing = optional.orElseThrow(() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Recurrency.class.getName()));
+		Recurrency existing = getRecurrency(id);
 		existing = updateData(existing, recurrency);
 		existing = repository.save(existing);
+		reccurencyPublisher.publisherRecurrencyUpdatedEvent(existing);
 		return new RecurrencyDTO(existing);
 	}
 	
 	@Transactional
 	public void delete(Integer id) {
-		findById(id);
+		Recurrency recurrency = getRecurrency(id);
 		
 		try {
 			repository.deleteById(id);
+			reccurencyPublisher.publisherRecurrencyDeletedEvent(recurrency);
 		}
 		catch(DataIntegrityViolationException e) {			
 			throw new DataIntegrityException("Deletion is not possible. Recurrency has associated registers.");
@@ -118,5 +123,12 @@ public class RecurrencyService {
 				wallet,
 				group
 			);
+	}
+	
+	private Recurrency getRecurrency(Integer id) {
+		Optional<Recurrency> optional = repository.findById(id);
+		return optional.orElseThrow(
+			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Recurrency.class.getName())
+		);
 	}
 }

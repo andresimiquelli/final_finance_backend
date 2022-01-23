@@ -2,8 +2,8 @@ package com.andresimiquelli.finalfinance.entities.enums;
 
 public enum PeriodStatus {
 
-	OPEN(1, "active"),
-	CLOSE(0, "inactive");
+	OPEN(1, "open"),
+	CLOSE(0, "close");
 	
 	private Integer cod;
 	private String label;

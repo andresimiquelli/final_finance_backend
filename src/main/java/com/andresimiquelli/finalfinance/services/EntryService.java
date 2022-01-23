@@ -20,6 +20,7 @@ import com.andresimiquelli.finalfinance.repositories.EntryRepository;
 import com.andresimiquelli.finalfinance.repositories.GroupRepository;
 import com.andresimiquelli.finalfinance.repositories.PeriodRepository;
 import com.andresimiquelli.finalfinance.repositories.RecurrencyRepository;
+import com.andresimiquelli.finalfinance.services.events.PeriodEventPublisher;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -38,6 +39,9 @@ public class EntryService {
 	@Autowired
 	private RecurrencyRepository recurrencyRepository;
 	
+	@Autowired
+	private PeriodEventPublisher periodPublisher;	
+	
 	@Transactional(readOnly = true)
 	public Page<EntryDTO> findAll(Pageable pageable){
 		Page<Entry> result = repository.findAll(pageable);
@@ -54,7 +58,8 @@ public class EntryService {
 	@Transactional
 	public EntryDTO insert(EntryPostDTO entry) {
 		Entry newEntry = fromDTO(entry);
-		repository.save(newEntry);
+		newEntry = repository.save(newEntry);
+		periodPublisher.publisherPeriodEntriesChangedEvent(newEntry.getPeriod());
 		return new EntryDTO(newEntry);
 	}
 	
@@ -63,15 +68,17 @@ public class EntryService {
 		Entry existing = getEntry(id);
 		Entry newEntry = updateData(existing, entry);
 		newEntry = repository.save(newEntry);
+		periodPublisher.publisherPeriodEntriesChangedEvent(newEntry.getPeriod());
 		return new EntryDTO(newEntry);
 	}
 	
 	@Transactional
 	public void delete(Integer id) {
-		findById(id);
+		Entry entry = getEntry(id);
 		
 		try {
 			repository.deleteById(id);
+			periodPublisher.publisherPeriodEntriesChangedEvent(entry.getPeriod());
 		}
 		catch(DataIntegrityViolationException e) {			
 			throw new DataIntegrityException("Deletion is not possible. Entry has associated registers.");

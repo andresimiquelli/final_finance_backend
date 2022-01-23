@@ -18,7 +18,7 @@ insert into recurrences(wallet_id,type,title,description,amount,status) values(1
 insert into recurrences(wallet_id,type,title,description,amount,status) values(1,2,'Internet','Acesse',69.9,1);
 insert into recurrences(wallet_id,type,title,description,amount,status) values(1,2,'Luz','Cemig',100,1);
 
-insert into entries(period_id,group_id,recurrency_id,type,title,description,amount,status) values(1,1,1,1,'Salário','Referente a 32 aulas',3500,1);
-insert into entries(period_id,group_id,recurrency_id,type,title,description,amount,status) values(1,1,2,1,'Winner','Referente a 72 horas',2500,1);
-insert into entries(period_id,group_id,recurrency_id,type,title,description,amount,status) values(1,2,3,2,'Internet','Acesse',69.9,1);
-insert into entries(period_id,group_id,recurrency_id,type,title,description,amount,status) values(1,3,4,2,'Luz','Cemig',100,1);
+insert into entries(period_id,group_id,recurrency_id,type,title,description,amount) values(1,1,1,1,'Salário','Referente a 32 aulas',3500);
+insert into entries(period_id,group_id,recurrency_id,type,title,description,amount) values(1,1,2,1,'Winner','Referente a 72 horas',2500);
+insert into entries(period_id,group_id,recurrency_id,type,title,description,amount) values(1,2,3,2,'Internet','Acesse',69.9);
+insert into entries(period_id,group_id,recurrency_id,type,title,description,amount) values(1,3,4,2,'Luz','Cemig',100);

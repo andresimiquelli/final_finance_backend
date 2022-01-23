@@ -31,7 +31,6 @@ public class Entry implements Serializable {
 	private Double amount;
 	private String title;
 	private String description;
-	private Integer status;
 	
 	@CreationTimestamp
 	private Date created_at;
@@ -54,14 +53,13 @@ public class Entry implements Serializable {
 	
 	public Entry() {}
 	
-	public Entry(Integer id, EntryType type, Double amount, String title, String description, Integer status, Period period, Group group, Recurrency recurrency) {
+	public Entry(Integer id, EntryType type, Double amount, String title, String description, Period period, Group group, Recurrency recurrency) {
 		super();
 		this.id = id;
 		this.type = type.getCod();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
-		this.status = status;
 		this.period = period;
 		this.group = group;
 		this.setRecurrency(recurrency);
@@ -105,14 +103,6 @@ public class Entry implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
 	}
 
 	public Date getCreated_at() {

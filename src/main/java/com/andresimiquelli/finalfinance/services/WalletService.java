@@ -37,8 +37,7 @@ public class WalletService {
 	
 	@Transactional(readOnly = true)
 	public WalletDTO findById(Integer id){
-		Optional<Wallet> obj = repository.findById(id);
-		Wallet wallet = obj.orElseThrow(() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Wallet.class.getName()));
+		Wallet wallet = getWallet(id);
 		return new WalletDTO(wallet);
 	}
 	
@@ -51,10 +50,8 @@ public class WalletService {
 	
 	@Transactional
 	public WalletDTO update(Integer id, WalletPutDTO wallet) {
-		Wallet newWallet = fromDTO(wallet);
-		Optional<Wallet> optional = repository.findById(id);
-		Wallet existing = optional.get();
-		newWallet = updateData(existing, newWallet);
+		Wallet existing = getWallet(id);
+		Wallet newWallet = updateData(existing, wallet);
 		newWallet = repository.save(newWallet);
 		return new WalletDTO(newWallet);
 	}
@@ -66,17 +63,13 @@ public class WalletService {
 			repository.deleteById(id);
 		}
 		catch(DataIntegrityViolationException e) {			
-			throw new DataIntegrityException("Deletion not possible. Wallet has associated registers.");
+			throw new DataIntegrityException("Deletion is not possible. Wallet has associated registers.");
 		}
 		
 	}
 	
-	public Wallet fromDTO(WalletDTO wallet) {
-		return new Wallet(wallet.getId(), wallet.getName(), wallet.getDescription(), wallet.getLeftover(), null);
-	}
-	
-	public Wallet fromDTO(WalletPostDTO wallet) {
-		User user = userRepository.getById(wallet.getUserId());
+	private Wallet fromDTO(WalletPostDTO wallet) {
+		User user = getUser(wallet.getUserId());
 		return new Wallet(
 				null, 
 				wallet.getName(), 
@@ -86,11 +79,7 @@ public class WalletService {
 			);
 	}
 	
-	public Wallet fromDTO(WalletPutDTO wallet) {
-		return new Wallet(null, wallet.getName(), wallet.getDescription(), wallet.getLeftover(), null);
-	}
-	
-	private Wallet updateData(Wallet existing, Wallet newWallet) {
+	private Wallet updateData(Wallet existing, WalletPutDTO newWallet) {
 		if(newWallet.getName() != null)
 			existing.setName(newWallet.getName());
 		
@@ -101,6 +90,20 @@ public class WalletService {
 			existing.setLeftover(newWallet.getLeftover());
 		
 		return existing;
+	}
+	
+	private Wallet getWallet(Integer id) {
+		Optional<Wallet> optional = repository.findById(id);
+		return optional.orElseThrow(
+			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Wallet.class.getName())
+		);
+	}
+	
+	private User getUser(Integer id) {
+		Optional<User> optional = userRepository.findById(id);
+		return optional.orElseThrow(
+			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+User.class.getName())
+		);
 	}
 
 }

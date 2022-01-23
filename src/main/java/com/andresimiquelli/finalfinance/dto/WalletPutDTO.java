@@ -1,8 +1,11 @@
 package com.andresimiquelli.finalfinance.dto;
 
+import java.io.Serializable;
+
 import org.hibernate.validator.constraints.Length;
 
-public class WalletPutDTO {
+public class WalletPutDTO implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Length(min = 3, max = 191)
 	private String name;

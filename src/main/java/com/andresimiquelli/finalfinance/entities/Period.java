@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.andresimiquelli.finalfinance.entities.enums.PeriodStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -42,12 +43,16 @@ public class Period implements Serializable{
 	
 	public Period() {}
 
-	public Period(Integer id, Integer year, Integer month, Double leftover, Integer status) {
+	public Period(Integer id, Integer year, Integer month, Double leftover, PeriodStatus status, Wallet wallet) {
 		this.id = id;
 		this.year = year;
 		this.month = month;
 		this.leftover = leftover;
-		this.status = status;
+		
+		if(status != null)
+			this.status = status.getCod();
+		
+		this.wallet = wallet;
 	}
 
 	public Integer getId() {
@@ -82,12 +87,13 @@ public class Period implements Serializable{
 		this.leftover = leftover;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public PeriodStatus getStatus() {
+		return PeriodStatus.toEnum(status);
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setStatus(PeriodStatus status) {
+		if(status != null)
+			this.status = status.getCod();
 	}
 	
 	public Wallet getWallet() {

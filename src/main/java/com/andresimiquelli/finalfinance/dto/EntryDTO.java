@@ -12,7 +12,6 @@ public class EntryDTO {
 	private Double amount;
 	private String title;
 	private String description;
-	private Integer status;
 	private Date created_at;
 	private Date updated_at;
 	
@@ -21,13 +20,12 @@ public class EntryDTO {
 	
 	public EntryDTO() {}
 
-	public EntryDTO(Integer id, EntryType type, Double amount, String title, String description, Integer status, GroupDTO group, RecurrencyDTO recurrency) {
+	public EntryDTO(Integer id, EntryType type, Double amount, String title, String description, GroupDTO group, RecurrencyDTO recurrency) {
 		this.id = id;
 		this.type = type;
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
-		this.status = status;
 		this.group = group;
 		this.setRecurrency(recurrency);
 	}
@@ -38,7 +36,7 @@ public class EntryDTO {
 		amount = entry.getAmount();
 		title = entry.getTitle();
 		description = entry.getDescription();
-		status = entry.getStatus();
+
 		this.setCreated_at(entry.getCreated_at());
 		this.setUpdated_at(entry.getUpdated_at());
 		
@@ -87,14 +85,6 @@ public class EntryDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
 	}
 
 	public Date getCreated_at() {

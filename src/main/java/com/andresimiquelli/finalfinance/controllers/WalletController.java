@@ -54,7 +54,7 @@ public class WalletController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<WalletDTO> update(@PathVariable Integer id) {
+	public ResponseEntity<Void> update(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}

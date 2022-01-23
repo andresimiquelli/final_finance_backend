@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.andresimiquelli.finalfinance.entities.enums.EntryType;
+import com.andresimiquelli.finalfinance.entities.enums.RecurrencyStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -41,13 +42,16 @@ public class Recurrency implements Serializable{
 	
 	public Recurrency() {}
 
-	public Recurrency(Integer id, EntryType type, Double amount, String title, String description, Integer status, Wallet wallet, Group group) {
+	public Recurrency(Integer id, EntryType type, Double amount, String title, String description, RecurrencyStatus status, Wallet wallet, Group group) {
 		this.id = id;
 		this.type = type.getCod();
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
-		this.status = status;
+		
+		if(status != null)
+			this.status = status.getCod();
+		
 		this.wallet = wallet;
 		this.setGroup(group);
 	}
@@ -92,12 +96,12 @@ public class Recurrency implements Serializable{
 		this.description = description;
 	}
 
-	public Integer getStatus() {
-		return status;
+	public RecurrencyStatus getStatus() {
+		return RecurrencyStatus.toEnum(status);
 	}
 
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setStatus(RecurrencyStatus status) {
+		this.status = status.getCod();
 	}
 	
 	public Wallet getWallet() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.andresimiquelli.finalfinance.entities.Period;
+import com.andresimiquelli.finalfinance.entities.enums.PeriodStatus;
 
 public class PeriodDTO {
 
@@ -11,13 +12,13 @@ public class PeriodDTO {
 	private Integer year;
 	private Integer month;
 	private Double leftover;
-	private Integer status;
+	private PeriodStatus status;
 	
 	private List<EntryDTO> entries = new ArrayList<EntryDTO>();
 	
 	public PeriodDTO() {}
 
-	public PeriodDTO(Integer id, Integer year, Integer month, Double leftover, Integer status) {
+	public PeriodDTO(Integer id, Integer year, Integer month, Double leftover, PeriodStatus status) {
 		super();
 		this.id = id;
 		this.year = year;
@@ -67,11 +68,11 @@ public class PeriodDTO {
 		this.leftover = leftover;
 	}
 
-	public Integer getStatus() {
+	public PeriodStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(PeriodStatus status) {
 		this.status = status;
 	}
 

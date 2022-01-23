@@ -43,11 +43,12 @@ public class Wallet implements Serializable{
 	
 	public Wallet() {}
 
-	public Wallet(Integer id, String name, String description) {
+	public Wallet(Integer id, String name, String description, User user) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.user = user;
 	}
 
 	public Integer getId() {

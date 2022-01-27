@@ -2,10 +2,14 @@ package com.andresimiquelli.finalfinance.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.andresimiquelli.finalfinance.entities.User;
+import com.andresimiquelli.finalfinance.entities.enums.UserLevel;
 import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -13,8 +17,10 @@ public class UserDTO implements Serializable{
 	private Integer id;
 	private String name;
 	private String email;
+	@JsonIgnore
 	private String password;
 	private UserStatus status;
+	private Set<UserLevel> levels = new HashSet<>();
 	
 	private List<WalletDTO> wallets = new ArrayList<WalletDTO>();
 	
@@ -35,6 +41,7 @@ public class UserDTO implements Serializable{
 		password = user.getPassword();
 		status = user.getStatus();
 		wallets = user.getWallets().stream().map(item -> new WalletDTO(item)).toList();
+		levels = user.getLevels();
 	}
 
 	public Integer getId() {
@@ -83,6 +90,14 @@ public class UserDTO implements Serializable{
 
 	public void setWallets(List<WalletDTO> wallets) {
 		this.wallets = wallets;
+	}
+
+	public Set<UserLevel> getLevels() {
+		return levels;
+	}
+
+	public void setLevels(Set<UserLevel> levels) {
+		this.levels = levels;
 	}
 
 }

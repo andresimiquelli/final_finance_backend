@@ -2,16 +2,23 @@ package com.andresimiquelli.finalfinance.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.andresimiquelli.finalfinance.entities.enums.UserLevel;
 import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -28,11 +35,17 @@ public class User implements Serializable{
 	private String password;
 	private Integer status;
 	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "USER_LEVELS")
+	private Set<Integer> levels = new HashSet<>();
+	
 	@JsonManagedReference
 	@OneToMany(mappedBy = "user")
 	private List<Wallet> wallets = new ArrayList<Wallet>();
 	
-	public User() {}
+	public User() {
+		this.levels.add(UserLevel.COMMON.getCod());
+	}
 
 	public User(Integer id, String name, String email, String password, Integer status) {
 		this.id = id;
@@ -40,6 +53,7 @@ public class User implements Serializable{
 		this.email = email;
 		this.password = password;
 		this.status = status;
+		this.levels.add(UserLevel.COMMON.getCod());
 	}
 
 	public Integer getId() {
@@ -81,6 +95,14 @@ public class User implements Serializable{
 	public void setStatus(UserStatus status) {
 		if(status != null)
 			this.status = status.getCod();
+	}
+	
+	public Set<UserLevel> getLevels() {
+		return levels.stream().map(x -> UserLevel.toEnum(x)).collect(Collectors.toSet());
+	}
+	
+	public void addLevel(UserLevel level) {
+		levels.add(level.getCod());
 	}
 	
 	public List<Wallet> getWallets() {

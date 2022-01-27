@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ public class UserService {
 	
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAll(Pageable pageable){
@@ -67,7 +71,13 @@ public class UserService {
 	}
 	
 	private User fromDTO(UserPostDTO dto) {
-		return new User(null, dto.getName(), dto.getEmail(), dto.getPassword(), UserStatus.ACTIVE.getCod());
+		return new User(
+				null, 
+				dto.getName(), 
+				dto.getEmail(), 
+				passwordEncoder.encode(dto.getPassword()),
+				UserStatus.ACTIVE.getCod()
+			);
 	}
 	
 	private User updateData(User existing, UserPutDTO user ) {
@@ -75,7 +85,7 @@ public class UserService {
 			existing.setName(user.getName());
 		
 		if(user.getPassword() != null)
-			existing.setPassword(user.getPassword());
+			existing.setPassword(passwordEncoder.encode(user.getPassword()));
 		
 		if(user.getStatus() != null)
 			existing.setStatus(user.getStatus());

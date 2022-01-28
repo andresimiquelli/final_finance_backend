@@ -1,7 +1,7 @@
 insert into users(name,email,password,status) values ('João André','andresimiquelli@hotmail.com','$2a$10$l6MwXRQ63wwErIjCGo7jVeyo6Rud8S2LqkXKsZaBcZNmh4Ajs5way',1);
 insert into users(name,email,password,status) values ('Maria Valentina','mariavalentina@gmail.com','$2a$10$l6MwXRQ63wwErIjCGo7jVeyo6Rud8S2LqkXKsZaBcZNmh4Ajs5way',1);
 insert into users(name,email,password,status) values ('Alex Souza','alexsouza@gamil.com','$2a$10$l6MwXRQ63wwErIjCGo7jVeyo6Rud8S2LqkXKsZaBcZNmh4Ajs5way',1);
-insert into users(name,email,password,status) values ('Cristiane Alencasr','cristiane@hotmail.com','$2a$10$l6MwXRQ63wwErIjCGo7jVeyo6Rud8S2LqkXKsZaBcZNmh4Ajs5way',1);
+insert into users(name,email,password,status) values ('Cristiane Alencasr','cristiane@hotmail.com','$2a$10$Jg5A658hdoX2yeC7S1R3GejTRVO82QGiKuRf3/iZ9zUes2ZN9TUdK',1);
 
 insert into user_levels(user_id,levels) values(1,0);
 insert into user_levels(user_id,levels) values(1,1);

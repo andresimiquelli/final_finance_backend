@@ -1,5 +1,7 @@
 package com.andresimiquelli.finalfinance.services.events;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,15 @@ public class PeriodEventPublisher {
 	public void publisherPeriodEntriesChangedEvent(Period period) {
 		PeriodEntriesChangedEvent event = new PeriodEntriesChangedEvent(this, period);
 		publisher.publishEvent(event);
+	}
+	
+	public void publisherPeriodEntriesChangedEvent(Set<Period> periods) {
+		
+		for(Period period : periods) {
+			PeriodEntriesChangedEvent event = new PeriodEntriesChangedEvent(this, period);
+			publisher.publishEvent(event);
+		}
+		
 	}
 
 }

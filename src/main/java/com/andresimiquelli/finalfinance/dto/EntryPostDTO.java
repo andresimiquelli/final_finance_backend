@@ -7,12 +7,16 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.andresimiquelli.finalfinance.entities.enums.EntryType;
+import com.andresimiquelli.finalfinance.services.validation.EntryPostValidation;
 
+@EntryPostValidation
 public class EntryPostDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull
 	private Integer periodId;
+	private Integer periodYear;
+	private Integer periodMonth;
+	private Integer walletId;
 	@NotNull
 	private EntryType type;
 	@NotNull
@@ -83,6 +87,30 @@ public class EntryPostDTO implements Serializable{
 
 	public void setPeriodId(Integer periodId) {
 		this.periodId = periodId;
+	}
+
+	public Integer getPeriodMonth() {
+		return periodMonth;
+	}
+
+	public void setPeriodMonth(Integer periodMonth) {
+		this.periodMonth = periodMonth;
+	}
+
+	public Integer getPeriodYear() {
+		return periodYear;
+	}
+
+	public void setPeriodYear(Integer periodYear) {
+		this.periodYear = periodYear;
+	}
+
+	public Integer getWalletId() {
+		return walletId;
+	}
+
+	public void setWalletId(Integer walletId) {
+		this.walletId = walletId;
 	}
 	
 }

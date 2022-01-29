@@ -1,8 +1,10 @@
 package com.andresimiquelli.finalfinance.controllers;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,6 +48,16 @@ public class EntryController {
 		EntryDTO newEntry = service.insert(entry);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(newEntry.getId()).toUri();
 		return ResponseEntity.created(uri).body(newEntry);
+	}
+	
+	@PostMapping(value = "/installments")
+	public ResponseEntity<List<EntryDTO>> insertAll(
+			@RequestBody 
+			@NotEmpty(message = "Input entry list cannot be empty.")
+			List<@Valid EntryPostDTO> entries) {
+		
+		List<EntryDTO> inserted = service.insertInstallments(entries);
+		return ResponseEntity.created(null).body(inserted);
 	}
 	
 	@PutMapping(value = "/{id}")

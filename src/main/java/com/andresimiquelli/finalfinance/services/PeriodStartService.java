@@ -40,7 +40,10 @@ public class PeriodStartService implements ApplicationListener<PeriodCreatedEven
 			recurrency.getDescription(),
 			period,
 			recurrency.getGroup(),
-			recurrency
+			recurrency,
+			1,
+			1,
+			false
 		);
 	}
 

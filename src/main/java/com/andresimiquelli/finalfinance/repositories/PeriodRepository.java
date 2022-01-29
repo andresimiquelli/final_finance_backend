@@ -11,4 +11,6 @@ public interface PeriodRepository extends JpaRepository<Period, Integer>{
 
 	@Query("SELECT per FROM Period per WHERE per.status = ?1")
 	List<Period> findByStatus(Integer status);
+	
+	Period findByYearAndMonthAndWalletId(Integer year, Integer month, Integer walletdId);
 }

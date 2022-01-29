@@ -16,17 +16,28 @@ public class EntryPutDTO implements Serializable{
 	@Length(max = 255)
 	private String description;
 	private Integer groupId;
+	private Integer installment;
+	private Integer totalInstallments;
+	private Boolean paid;
 	
 	public EntryPutDTO() {}
 
-	public EntryPutDTO(EntryType type, Double amount, @Length(min = 1, max = 60) String title,
-			@Length(max = 255) String description, Integer groupId) {
-		super();
+	public EntryPutDTO(
+			EntryType type, 
+			Double amount, 
+			@Length(min = 1, max = 60) String title,
+			@Length(max = 255) String description, 
+			Integer groupId,
+			Integer installment,
+			Integer totalInstallments) {
+		
 		this.type = type;
 		this.amount = amount;
 		this.title = title;
 		this.description = description;
 		this.groupId = groupId;
+		this.installment = installment;
+		this.totalInstallments = totalInstallments;
 	}
 
 	public EntryType getType() {
@@ -67,6 +78,30 @@ public class EntryPutDTO implements Serializable{
 
 	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
+	}
+
+	public Integer getInstallment() {
+		return installment;
+	}
+
+	public void setInstallment(Integer installment) {
+		this.installment = installment;
+	}
+
+	public Integer getTotalInstallments() {
+		return totalInstallments;
+	}
+
+	public void setTotalInstallments(Integer totalInstallments) {
+		this.totalInstallments = totalInstallments;
+	}
+
+	public Boolean getPaid() {
+		return paid;
+	}
+
+	public void setPaid(Boolean paid) {
+		this.paid = paid;
 	}
 	
 }

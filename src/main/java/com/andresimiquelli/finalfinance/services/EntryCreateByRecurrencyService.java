@@ -42,7 +42,10 @@ public class EntryCreateByRecurrencyService implements ApplicationListener<Recur
 					event.getRecurrency().getDescription(),
 					x,
 					event.getRecurrency().getGroup(),
-					event.getRecurrency()
+					event.getRecurrency(),
+					1,
+					1,
+					false
 			));
 		}
 		

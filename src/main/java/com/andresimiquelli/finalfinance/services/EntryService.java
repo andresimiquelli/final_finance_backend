@@ -1,6 +1,10 @@
 package com.andresimiquelli.finalfinance.services;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,10 +20,13 @@ import com.andresimiquelli.finalfinance.entities.Entry;
 import com.andresimiquelli.finalfinance.entities.Group;
 import com.andresimiquelli.finalfinance.entities.Period;
 import com.andresimiquelli.finalfinance.entities.Recurrency;
+import com.andresimiquelli.finalfinance.entities.Wallet;
+import com.andresimiquelli.finalfinance.entities.enums.PeriodStatus;
 import com.andresimiquelli.finalfinance.repositories.EntryRepository;
 import com.andresimiquelli.finalfinance.repositories.GroupRepository;
 import com.andresimiquelli.finalfinance.repositories.PeriodRepository;
 import com.andresimiquelli.finalfinance.repositories.RecurrencyRepository;
+import com.andresimiquelli.finalfinance.repositories.WalletRepository;
 import com.andresimiquelli.finalfinance.services.events.PeriodEventPublisher;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
@@ -29,6 +36,9 @@ public class EntryService {
 
 	@Autowired
 	private EntryRepository repository;
+	
+	@Autowired
+	private WalletRepository walletRepository;
 	
 	@Autowired
 	private PeriodRepository periodRepository;
@@ -55,12 +65,29 @@ public class EntryService {
 		return new EntryDTO(entry);
 	}
 	
-	@Transactional
 	public EntryDTO insert(EntryPostDTO entry) {
-		Entry newEntry = fromDTO(entry);
+		Entry newEntry = fromDTO(entry, 1, 1);
 		newEntry = repository.save(newEntry);
 		periodPublisher.publisherPeriodEntriesChangedEvent(newEntry.getPeriod());
 		return new EntryDTO(newEntry);
+	}
+	
+	public List<EntryDTO> insertInstallments(List<EntryPostDTO> entries) {
+		List<EntryDTO> inserted = new ArrayList<>();
+		Set<Period> periods = new HashSet<>();
+		
+		Integer installment = 1;
+		Integer totalInstallments = entries.size();
+		for(EntryPostDTO entry: entries) {
+			Entry newEntry = fromDTO(entry, installment, totalInstallments);
+			newEntry = repository.save(newEntry);
+			inserted.add(new EntryDTO(newEntry));
+			periods.add(newEntry.getPeriod());
+		}
+		
+		periodPublisher.publisherPeriodEntriesChangedEvent(periods);
+		
+		return inserted;
 	}
 	
 	@Transactional
@@ -105,12 +132,30 @@ public class EntryService {
 			existing.setGroup(group);
 		}
 		
+		if(newEntry.getInstallment() != null) {
+			existing.setInstallment(newEntry.getInstallment());
+		}
+		
+		if(newEntry.getTotalInstallments() != null) {
+			existing.setTotalInstallments(newEntry.getTotalInstallments());
+		}
+		
+		if(newEntry.getPaid() != null) {
+			existing.setPaid(newEntry.getPaid());
+		}
+		
 		return existing;
 	}
 	
-	private Entry fromDTO(EntryPostDTO entry) {
-		Period period = getPeriod(entry.getPeriodId());
+	private Entry fromDTO(EntryPostDTO entry, Integer installment, Integer totalInstallments) {
 		
+		Period period = null;
+		if(entry.getPeriodId() == null) {
+			period = getPeriod(entry.getPeriodYear(), entry.getPeriodMonth(), entry.getWalletId());
+		} else {
+			period = getPeriod(entry.getPeriodId());
+		}
+			
 		Group group = null;
 		if(entry.getGroupId() != null)
 			group = getGroup(entry.getGroupId());
@@ -127,7 +172,10 @@ public class EntryService {
 				entry.getDescription(), 
 				period, 
 				group, 
-				recurrency
+				recurrency,
+				installment,
+				totalInstallments,
+				false
 			);
 	}
 	
@@ -143,6 +191,22 @@ public class EntryService {
 		return optional.orElseThrow(
 			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Period.class.getName())
 		);
+	}
+	
+	private Period getPeriod(Integer year, Integer month, Integer walletId) {
+		Period period = periodRepository.findByYearAndMonthAndWalletId(year, month, walletId);
+		 if(period == null) {
+			 Wallet wallet = walletRepository.getById(walletId);
+			 if(wallet != null) {
+				 Period newPeriod = new Period(null, year, month, 0.0, PeriodStatus.OPEN, wallet);
+				 newPeriod = periodRepository.save(newPeriod);
+				 return newPeriod;
+			 }
+
+			throw new ResourceNotFoundException("Resource not found Id: "+walletId+" Tipo: "+Wallet.class.getName());
+		 }
+		 
+		return period;
 	}
 	
 	private Group getGroup(Integer id) {

@@ -31,6 +31,9 @@ public class Entry implements Serializable {
 	private Double amount;
 	private String title;
 	private String description;
+	private Integer installment;
+	private Integer totalInstallments;
+	private Boolean paid;
 	
 	@CreationTimestamp
 	private Date created_at;
@@ -53,8 +56,19 @@ public class Entry implements Serializable {
 	
 	public Entry() {}
 	
-	public Entry(Integer id, EntryType type, Double amount, String title, String description, Period period, Group group, Recurrency recurrency) {
-		super();
+	public Entry(
+			Integer id, 
+			EntryType type, 
+			Double amount, 
+			String title, 
+			String description, 
+			Period period, 
+			Group group, 
+			Recurrency recurrency,
+			Integer installment,
+			Integer totalInstallments,
+			boolean paid) {
+
 		this.id = id;
 		this.type = type.getCod();
 		this.amount = amount;
@@ -63,6 +77,10 @@ public class Entry implements Serializable {
 		this.period = period;
 		this.group = group;
 		this.setRecurrency(recurrency);
+		this.installment = installment;
+		this.totalInstallments = totalInstallments;
+		this.paid = paid;
+		
 	}
 
 	public Integer getId() {
@@ -71,6 +89,14 @@ public class Entry implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
 	}
 
 	public EntryType getType() {
@@ -121,14 +147,6 @@ public class Entry implements Serializable {
 		this.updated_at = updated_at;
 	}
 	
-	public Period getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(Period period) {
-		this.period = period;
-	}
-	
 	public Group getGroup() {
 		return group;
 	}
@@ -143,6 +161,30 @@ public class Entry implements Serializable {
 
 	public void setRecurrency(Recurrency recurrency) {
 		this.recurrency = recurrency;
+	}
+	
+	public Integer getInstallment() {
+		return installment;
+	}
+
+	public void setInstallment(Integer installment) {
+		this.installment = installment;
+	}
+
+	public Integer getTotalInstallments() {
+		return totalInstallments;
+	}
+
+	public void setTotalInstallments(Integer totalInstallments) {
+		this.totalInstallments = totalInstallments;
+	}
+	
+	public Boolean getPaid() {
+		return paid;
+	}
+
+	public void setPaid(Boolean paid) {
+		this.paid = paid;
 	}
 	
 	@Override

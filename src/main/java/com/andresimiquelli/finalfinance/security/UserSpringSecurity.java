@@ -31,6 +31,11 @@ public class UserSpringSecurity implements UserDetails {
 	public Integer getId(){
 		return id;
 	}
+	
+	public boolean hasRole(UserLevel level) {
+		
+		return getAuthorities().contains(new SimpleGrantedAuthority(level.getLabel()));
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

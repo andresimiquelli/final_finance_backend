@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +18,18 @@ import com.andresimiquelli.finalfinance.entities.Entry;
 import com.andresimiquelli.finalfinance.entities.Group;
 import com.andresimiquelli.finalfinance.entities.Period;
 import com.andresimiquelli.finalfinance.entities.Recurrency;
+import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.Wallet;
 import com.andresimiquelli.finalfinance.entities.enums.PeriodStatus;
 import com.andresimiquelli.finalfinance.repositories.EntryRepository;
 import com.andresimiquelli.finalfinance.repositories.GroupRepository;
 import com.andresimiquelli.finalfinance.repositories.PeriodRepository;
 import com.andresimiquelli.finalfinance.repositories.RecurrencyRepository;
+import com.andresimiquelli.finalfinance.repositories.UserRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.security.UserSpringSecurity;
 import com.andresimiquelli.finalfinance.services.events.PeriodEventPublisher;
+import com.andresimiquelli.finalfinance.services.exceptions.AuthorizationException;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -52,16 +54,20 @@ public class EntryService {
 	@Autowired
 	private PeriodEventPublisher periodPublisher;	
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Transactional(readOnly = true)
-	public Page<EntryDTO> findAll(Pageable pageable){
-		Page<Entry> result = repository.findAll(pageable);
-		Page<EntryDTO> page = result.map(item -> new EntryDTO(item));
+	public List<EntryDTO> findAll(Integer periodId){
+		List<Entry> result = repository.findByPeriodWalletUserAndPeriodId(getAuthenticatedUser(), periodId);
+		List<EntryDTO> page = result.stream().map(item -> new EntryDTO(item)).toList();
 		return page;
 	}
 	
 	@Transactional(readOnly = true)
 	public EntryDTO findById(Integer id){
 		Entry entry = getEntry(id);
+		vefAuthorization(entry);
 		return new EntryDTO(entry);
 	}
 	
@@ -93,6 +99,8 @@ public class EntryService {
 	@Transactional
 	public EntryDTO update(Integer id, EntryPutDTO entry) {
 		Entry existing = getEntry(id);
+		vefAuthorization(existing);
+		
 		Entry newEntry = updateData(existing, entry);
 		newEntry = repository.save(newEntry);
 		periodPublisher.publisherPeriodEntriesChangedEvent(newEntry.getPeriod());
@@ -102,6 +110,7 @@ public class EntryService {
 	@Transactional
 	public void delete(Integer id) {
 		Entry entry = getEntry(id);
+		vefAuthorization(entry);
 		
 		try {
 			repository.deleteById(id);
@@ -157,12 +166,16 @@ public class EntryService {
 		}
 			
 		Group group = null;
-		if(entry.getGroupId() != null)
+		if(entry.getGroupId() != null) {
 			group = getGroup(entry.getGroupId());
+			vefAuthorization(group);
+		}
 		
 		Recurrency recurrency = null;
-		if(entry.getRecurrencyId() != null)
+		if(entry.getRecurrencyId() != null) {
 			recurrency = getRecurrency(entry.getRecurrencyId());
+			vefAuthorization(recurrency);
+		}
 		
 		return new Entry(
 				null, 
@@ -194,10 +207,15 @@ public class EntryService {
 	}
 	
 	private Period getPeriod(Integer year, Integer month, Integer walletId) {
+		
 		Period period = periodRepository.findByYearAndMonthAndWalletId(year, month, walletId);
+		
 		 if(period == null) {
 			 Wallet wallet = walletRepository.getById(walletId);
+			 
 			 if(wallet != null) {
+				 vefAuthorization(wallet);
+				 
 				 Period newPeriod = new Period(null, year, month, 0.0, PeriodStatus.OPEN, wallet);
 				 newPeriod = periodRepository.save(newPeriod);
 				 return newPeriod;
@@ -205,6 +223,8 @@ public class EntryService {
 
 			throw new ResourceNotFoundException("Resource not found Id: "+walletId+" Tipo: "+Wallet.class.getName());
 		 }
+		 
+		 vefAuthorization(period);
 		 
 		return period;
 	}
@@ -221,5 +241,44 @@ public class EntryService {
 		return optional.orElseThrow(
 			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Recurrency.class.getName())
 		);
+	}
+	
+	private User getAuthenticatedUser() {
+		UserSpringSecurity auth = UserService.authenticated();
+		if(auth == null) {
+			throw new AuthorizationException("Forbidden");
+		}
+		
+		return userRepository.getById(auth.getId());
+	}
+	
+	private void vefAuthorization(Entry entry) {
+		if(entry.getPeriod().getWallet().getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied.");
+		}
+	}
+	
+	private void vefAuthorization(Wallet wallet) {
+		if(wallet.getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied, walletId.");
+		}
+	}
+	
+	private void vefAuthorization(Period period) {
+		if(period.getWallet().getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied, periodId.");
+		}
+	}
+	
+	private void vefAuthorization(Group group) {
+		if(group.getWallet().getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied, groupId.");
+		}
+	}
+	
+	private void vefAuthorization(Recurrency recurrency) {
+		if(recurrency.getWallet().getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied, recurrencyId.");
+		}
 	}
 }

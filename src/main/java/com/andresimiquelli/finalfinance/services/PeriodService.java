@@ -13,11 +13,15 @@ import com.andresimiquelli.finalfinance.dto.PeriodDTO;
 import com.andresimiquelli.finalfinance.dto.PeriodPostDTO;
 import com.andresimiquelli.finalfinance.dto.PeriodPutDTO;
 import com.andresimiquelli.finalfinance.entities.Period;
+import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.Wallet;
 import com.andresimiquelli.finalfinance.entities.enums.PeriodStatus;
 import com.andresimiquelli.finalfinance.repositories.PeriodRepository;
+import com.andresimiquelli.finalfinance.repositories.UserRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.security.UserSpringSecurity;
 import com.andresimiquelli.finalfinance.services.events.PeriodEventPublisher;
+import com.andresimiquelli.finalfinance.services.exceptions.AuthorizationException;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -33,9 +37,13 @@ public class PeriodService {
 	@Autowired
 	private PeriodEventPublisher periodEvent;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Transactional(readOnly = true)
-	public Page<PeriodDTO> findAll(Pageable pageable){
-		Page<Period> result = repository.findAll(pageable);
+	public Page<PeriodDTO> findAll(Integer walletId, Pageable pageable){
+		
+		Page<Period> result = repository.findByWalletUserAndWalletId(getAuthenticatedUser(), walletId, pageable);
 		Page<PeriodDTO> page = result.map(item -> new PeriodDTO(item));
 		return page;
 	}
@@ -102,6 +110,15 @@ public class PeriodService {
 		return optional.orElseThrow(
 				() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Wallet.class.getName())
 		);
+	}
+	
+	private User getAuthenticatedUser() {
+		UserSpringSecurity auth = UserService.authenticated();
+		if(auth == null) {
+			throw new AuthorizationException("Forbidden");
+		}
+		
+		return userRepository.getById(auth.getId());
 	}
 
 }

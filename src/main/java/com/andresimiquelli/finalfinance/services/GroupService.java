@@ -13,9 +13,13 @@ import com.andresimiquelli.finalfinance.dto.GroupDTO;
 import com.andresimiquelli.finalfinance.dto.GroupPostDTO;
 import com.andresimiquelli.finalfinance.dto.GroupPutDTO;
 import com.andresimiquelli.finalfinance.entities.Group;
+import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.Wallet;
 import com.andresimiquelli.finalfinance.repositories.GroupRepository;
+import com.andresimiquelli.finalfinance.repositories.UserRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.security.UserSpringSecurity;
+import com.andresimiquelli.finalfinance.services.exceptions.AuthorizationException;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -28,9 +32,12 @@ public class GroupService {
 	@Autowired
 	private WalletRepository walletRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@Transactional(readOnly = true)
-	public Page<GroupDTO> findAll(Pageable pageable){
-		Page<Group> result = repository.findAll(pageable);
+	public Page<GroupDTO> findAll(Integer walletId, Pageable pageable){
+		Page<Group> result = repository.findByWalletUserAndWalletId(getAuthenticatedUser(), walletId, pageable);
 		Page<GroupDTO> page = result.map(item -> new GroupDTO(item));
 		return page;
 	}
@@ -96,6 +103,15 @@ public class GroupService {
 		return optional.orElseThrow(
 				() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Wallet.class.getName())
 		);
+	}
+	
+	private User getAuthenticatedUser() {
+		UserSpringSecurity auth = UserService.authenticated();
+		if(auth == null) {
+			throw new AuthorizationException("Forbidden");
+		}
+		
+		return userRepository.getById(auth.getId());
 	}
 
 }

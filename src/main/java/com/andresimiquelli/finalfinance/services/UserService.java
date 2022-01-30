@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +14,11 @@ import com.andresimiquelli.finalfinance.dto.UserDTO;
 import com.andresimiquelli.finalfinance.dto.UserPostDTO;
 import com.andresimiquelli.finalfinance.dto.UserPutDTO;
 import com.andresimiquelli.finalfinance.entities.User;
+import com.andresimiquelli.finalfinance.entities.enums.UserLevel;
 import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 import com.andresimiquelli.finalfinance.repositories.UserRepository;
+import com.andresimiquelli.finalfinance.security.UserSpringSecurity;
+import com.andresimiquelli.finalfinance.services.exceptions.AuthorizationException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -25,9 +29,17 @@ public class UserService {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	public static UserSpringSecurity authenticated() {
+		try {
+			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	@Transactional(readOnly = true)
-	public Page<UserDTO> findAll(Pageable pageable){
+	public Page<UserDTO> findAll(Pageable pageable){		
 		Page<User> result = repository.findAll(pageable);
 		Page<UserDTO> page = result.map(item -> new UserDTO(item));
 		return page;
@@ -35,6 +47,9 @@ public class UserService {
 	
 	@Transactional(readOnly = true)
 	public UserDTO findById(Integer id){
+		
+		hasAuthorization(id);
+			
 		User user = getUser(id);
 		return new UserDTO(user);
 	}
@@ -48,6 +63,9 @@ public class UserService {
 	
 	@Transactional
 	public UserDTO update(Integer id, UserPutDTO user) {
+		
+		hasAuthorization(id);
+		
 		User existing = getUser(id);
 		User newUser = updateData(existing, user);
 		newUser = repository.save(newUser);
@@ -98,5 +116,12 @@ public class UserService {
 		return optional.orElseThrow(
 			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+User.class.getName())
 		);
+	}
+	
+	private void hasAuthorization(Integer id) {
+		UserSpringSecurity auth = authenticated();
+		if(auth == null || !auth.hasRole(UserLevel.ADMIN) && !id.equals(auth.getId())) {
+			throw new AuthorizationException("Access denied");
+		}
 	}
 }

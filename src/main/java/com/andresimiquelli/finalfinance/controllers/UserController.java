@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,6 +32,7 @@ public class UserController {
 	@Autowired
 	private UserService service;
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public Page<UserDTO> findAll(Pageable pageable){
 		return service.findAll(pageable);
@@ -41,6 +43,7 @@ public class UserController {
 		return service.findById(id);
 	}
 	
+	@PreAuthorize("hasAnyRole('DEVELOPER')")
 	@PostMapping
 	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserPostDTO user) {
 		UserDTO newUSer = service.insert(user);
@@ -60,6 +63,7 @@ public class UserController {
 		return ResponseEntity.accepted().body(newUser);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);

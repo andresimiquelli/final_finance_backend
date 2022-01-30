@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,8 +33,8 @@ public class PeriodController {
 	private PeriodService service;
 
 	@GetMapping
-	public Page<PeriodDTO> findAll(Pageable pageable){
-		return service.findAll(pageable);
+	public Page<PeriodDTO> findAll(@RequestParam Integer walletId, Pageable pageable){
+		return service.findAll(walletId, pageable);
 	}
 	
 	@GetMapping(value = "/{id}")

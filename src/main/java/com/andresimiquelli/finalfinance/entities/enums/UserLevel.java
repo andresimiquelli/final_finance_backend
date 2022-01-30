@@ -2,9 +2,9 @@ package com.andresimiquelli.finalfinance.entities.enums;
 
 public enum UserLevel {
 
-	COMMON(0, "HOLE_COMMON"),
-	DEVELOPER(1, "HOLE_DEVELOPER"),
-	ADMIN(2, "HOLE_ADMIN");
+	COMMON(0, "ROLE_COMMON"),
+	DEVELOPER(1, "ROLE_DEVELOPER"),
+	ADMIN(2, "ROLE_ADMIN");
 	
 	private Integer cod;
 	private String label;

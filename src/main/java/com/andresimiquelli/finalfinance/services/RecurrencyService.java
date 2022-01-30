@@ -14,12 +14,16 @@ import com.andresimiquelli.finalfinance.dto.RecurrencyPostDTO;
 import com.andresimiquelli.finalfinance.dto.RecurrencyPutDTO;
 import com.andresimiquelli.finalfinance.entities.Group;
 import com.andresimiquelli.finalfinance.entities.Recurrency;
+import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.Wallet;
 import com.andresimiquelli.finalfinance.entities.enums.RecurrencyStatus;
 import com.andresimiquelli.finalfinance.repositories.GroupRepository;
 import com.andresimiquelli.finalfinance.repositories.RecurrencyRepository;
+import com.andresimiquelli.finalfinance.repositories.UserRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.security.UserSpringSecurity;
 import com.andresimiquelli.finalfinance.services.events.RecurrencyEventPublisher;
+import com.andresimiquelli.finalfinance.services.exceptions.AuthorizationException;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -36,11 +40,15 @@ public class RecurrencyService {
 	private GroupRepository groupRepository;
 	
 	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
 	private RecurrencyEventPublisher reccurencyPublisher;
 	
 	@Transactional(readOnly = true)
-	public Page<RecurrencyDTO> findAll(Pageable pageable){
-		Page<Recurrency> result = repository.findAll(pageable);
+	public Page<RecurrencyDTO> findAll(Integer walletId, Pageable pageable){
+		
+		Page<Recurrency> result = repository.findByWalletUserAndWalletId(getAuthenticatedUser(), walletId, pageable);
 		Page<RecurrencyDTO> page = result.map(item -> new RecurrencyDTO(item));
 		return page;
 	}
@@ -130,5 +138,14 @@ public class RecurrencyService {
 		return optional.orElseThrow(
 			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+Recurrency.class.getName())
 		);
+	}
+	
+	private User getAuthenticatedUser() {
+		UserSpringSecurity auth = UserService.authenticated();
+		if(auth == null) {
+			throw new AuthorizationException("Forbidden");
+		}
+		
+		return userRepository.getById(auth.getId());
 	}
 }

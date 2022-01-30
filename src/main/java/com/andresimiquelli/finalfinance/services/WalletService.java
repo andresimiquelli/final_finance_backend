@@ -16,6 +16,8 @@ import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.Wallet;
 import com.andresimiquelli.finalfinance.repositories.UserRepository;
 import com.andresimiquelli.finalfinance.repositories.WalletRepository;
+import com.andresimiquelli.finalfinance.security.UserSpringSecurity;
+import com.andresimiquelli.finalfinance.services.exceptions.AuthorizationException;
 import com.andresimiquelli.finalfinance.services.exceptions.DataIntegrityException;
 import com.andresimiquelli.finalfinance.services.exceptions.ResourceNotFoundException;
 
@@ -30,7 +32,8 @@ public class WalletService {
 	
 	@Transactional(readOnly = true)
 	public Page<WalletDTO> findAll(Pageable pageable){
-		Page<Wallet> result = repository.findAll(pageable);
+		
+		Page<Wallet> result = repository.findByUser(getAuthenticatedUser(), pageable);
 		Page<WalletDTO> page = result.map(item -> new WalletDTO(item));
 		return page;
 	}
@@ -104,6 +107,15 @@ public class WalletService {
 		return optional.orElseThrow(
 			() -> new ResourceNotFoundException("Resource not found. Id: "+id+" Tipo: "+User.class.getName())
 		);
+	}
+	
+	private User getAuthenticatedUser() {
+		UserSpringSecurity auth = UserService.authenticated();
+		if(auth == null) {
+			throw new AuthorizationException("Forbidden");
+		}
+		
+		return userRepository.getById(auth.getId());
 	}
 
 }

@@ -43,6 +43,9 @@ public class PeriodService {
 	@Transactional(readOnly = true)
 	public Page<PeriodDTO> findAll(Integer walletId, Pageable pageable){
 		
+		Wallet wallet = getWallet(walletId);
+		vefAuthorization(wallet);
+		
 		Page<Period> result = repository.findByWalletUserAndWalletId(getAuthenticatedUser(), walletId, pageable);
 		Page<PeriodDTO> page = result.map(item -> new PeriodDTO(item));
 		return page;
@@ -51,6 +54,17 @@ public class PeriodService {
 	@Transactional(readOnly = true)
 	public PeriodDTO findById(Integer id){
 		Period period = getPeriod(id);
+		vefAuthorization(period);
+		return new PeriodDTO(period);
+	}
+	
+	@Transactional(readOnly = true)
+	public PeriodDTO findByDate(Integer year, Integer month) {
+		Period period = repository.findByYearAndMonthAndWalletId(year, month, month);
+		if(period == null)
+			throw new ResourceNotFoundException("Period "+year+"/"+month+" not found.");
+			
+		vefAuthorization(period);
 		return new PeriodDTO(period);
 	}
 	
@@ -72,7 +86,8 @@ public class PeriodService {
 	
 	@Transactional
 	public void delete(Integer id) {
-		findById(id);
+		Period period = getPeriod(id);
+		vefAuthorization(period);
 		
 		try {
 			repository.deleteById(id);
@@ -119,6 +134,18 @@ public class PeriodService {
 		}
 		
 		return userRepository.getById(auth.getId());
+	}
+	
+	private void vefAuthorization(Period period) {
+		if(period.getWallet().getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied, periodId.");
+		}
+	}
+	
+	private void vefAuthorization(Wallet wallet) {
+		if(wallet.getUser().getId() != getAuthenticatedUser().getId()) {
+			throw new AuthorizationException("Resource denied, walletId.");
+		}
 	}
 
 }

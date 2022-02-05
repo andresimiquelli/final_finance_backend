@@ -42,6 +42,11 @@ public class PeriodController {
 		return service.findById(id);
 	}
 	
+	@GetMapping(value = "/{year}/{month}")
+	public PeriodDTO findByDate(@PathVariable Integer year, @PathVariable Integer month) {
+		return service.findByDate(year, month);
+	}
+	
 	@PostMapping
 	public ResponseEntity<PeriodDTO> insert(@Valid @RequestBody PeriodPostDTO period) {
 		PeriodDTO newPeriod = service.insert(period);

@@ -43,6 +43,11 @@ public class UserController {
 		return service.findById(id);
 	}
 	
+	@GetMapping(value = "/me")
+	public UserDTO me(){
+		return service.getAuthenticatedUser();
+	}
+	
 	@PreAuthorize("hasAnyRole('DEVELOPER')")
 	@PostMapping
 	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserPostDTO user) {

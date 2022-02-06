@@ -79,6 +79,15 @@ public class UserService {
 		repository.save(fromDTO(obj));
 	}
 	
+	public UserDTO getAuthenticatedUser() {
+		UserSpringSecurity auth = UserService.authenticated();
+		if(auth == null) {
+			throw new AuthorizationException("Forbidden");
+		}
+		
+		return new UserDTO(repository.getById(auth.getId()));
+	}
+	
 	private User fromDTO(UserDTO dto) {
 		return new User(
 				dto.getId(), 

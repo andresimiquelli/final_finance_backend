@@ -59,8 +59,12 @@ public class PeriodService {
 	}
 	
 	@Transactional(readOnly = true)
-	public PeriodDTO findByDate(Integer year, Integer month) {
-		Period period = repository.findByYearAndMonthAndWalletId(year, month, month);
+	public PeriodDTO findByDate(Integer year, Integer month, Integer walletId) {
+		
+		Wallet wallet = getWallet(walletId);
+		vefAuthorization(wallet);
+		
+		Period period = repository.findByYearAndMonthAndWalletId(year, month, walletId);
 		if(period == null)
 			throw new ResourceNotFoundException("Period "+year+"/"+month+" not found.");
 			

@@ -43,8 +43,8 @@ public class PeriodController {
 	}
 	
 	@GetMapping(value = "/{year}/{month}")
-	public PeriodDTO findByDate(@PathVariable Integer year, @PathVariable Integer month) {
-		return service.findByDate(year, month);
+	public PeriodDTO findByDate(@PathVariable Integer year, @PathVariable Integer month, @RequestParam Integer walletId) {
+		return service.findByDate(year, month, walletId);
 	}
 	
 	@PostMapping

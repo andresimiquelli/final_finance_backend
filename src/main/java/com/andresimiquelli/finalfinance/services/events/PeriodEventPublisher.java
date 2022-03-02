@@ -20,6 +20,13 @@ public class PeriodEventPublisher {
 		publisher.publishEvent(event);
 	}
 	
+	public void publishPeriodCreatedEvent(Set<Period> periods) {
+		for(Period period : periods) {
+			PeriodCreatedEvent event = new PeriodCreatedEvent(this, period);
+			publisher.publishEvent(event);
+		}
+	}
+	
 	public void publisherPeriodUpdatedEvent(Period period, PeriodDTO previousPeriod) {
 		PeriodUpdatedEvent event = new PeriodUpdatedEvent(this, period, previousPeriod);
 		publisher.publishEvent(event);

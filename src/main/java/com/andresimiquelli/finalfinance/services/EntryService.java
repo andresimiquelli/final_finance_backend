@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.andresimiquelli.finalfinance.dto.EntryDTO;
 import com.andresimiquelli.finalfinance.dto.EntryPostDTO;
 import com.andresimiquelli.finalfinance.dto.EntryPutDTO;
+import com.andresimiquelli.finalfinance.dto.PeriodDTO;
 import com.andresimiquelli.finalfinance.entities.Entry;
 import com.andresimiquelli.finalfinance.entities.Group;
 import com.andresimiquelli.finalfinance.entities.Period;
@@ -57,6 +58,11 @@ public class EntryService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	private Set<Period> createdPeriods = new HashSet<>();
+	private Set<Period> updatedPeriods = new HashSet<>();
+	private Set<Period> restartedPeriods = new HashSet<>();
+	
+	
 	@Transactional(readOnly = true)
 	public List<EntryDTO> findAll(Integer periodId){
 		List<Entry> result = repository.findByPeriodWalletUserAndPeriodId(getAuthenticatedUser(), periodId);
@@ -80,7 +86,7 @@ public class EntryService {
 	
 	public List<EntryDTO> insertInstallments(List<EntryPostDTO> entries) {
 		List<EntryDTO> inserted = new ArrayList<>();
-		Set<Period> periods = new HashSet<>();
+		
 		
 		Integer installment = 1;
 		Integer totalInstallments = entries.size();
@@ -88,10 +94,20 @@ public class EntryService {
 			Entry newEntry = fromDTO(entry, installment, totalInstallments);
 			newEntry = repository.save(newEntry);
 			inserted.add(new EntryDTO(newEntry));
-			periods.add(newEntry.getPeriod());
+			installment++;
 		}
 		
-		periodPublisher.publisherPeriodEntriesChangedEvent(periods);
+		for(Period period : this.restartedPeriods) {
+			PeriodDTO periodDto = new PeriodDTO(period);
+			periodDto.setStatus(PeriodStatus.CLOSE);
+			periodPublisher.publisherPeriodUpdatedEvent(period, periodDto);
+		}
+		
+		if(this.updatedPeriods.size() > 0)
+			periodPublisher.publisherPeriodEntriesChangedEvent(this.updatedPeriods);
+		
+		if(this.createdPeriods.size() > 0)
+			periodPublisher.publishPeriodCreatedEvent(this.createdPeriods);
 		
 		return inserted;
 	}
@@ -218,14 +234,21 @@ public class EntryService {
 				 
 				 Period newPeriod = new Period(null, year, month, 0.0, PeriodStatus.OPEN, wallet);
 				 newPeriod = periodRepository.save(newPeriod);
+				 this.createdPeriods.add(newPeriod);
 				 return newPeriod;
 			 }
 
 			throw new ResourceNotFoundException("Resource not found Id: "+walletId+" Tipo: "+Wallet.class.getName());
 		 }
 		 
-		 vefAuthorization(period);
-		 
+		vefAuthorization(period);
+		if(period.getStatus() == PeriodStatus.CLOSE) {
+			period.setStatus(PeriodStatus.OPEN);
+			periodRepository.save(period);
+			this.restartedPeriods.add(period);
+		}
+		
+		this.updatedPeriods.add(period);
 		return period;
 	}
 	

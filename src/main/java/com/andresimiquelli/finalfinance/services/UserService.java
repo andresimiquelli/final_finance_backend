@@ -2,11 +2,11 @@ package com.andresimiquelli.finalfinance.services;
 
 import java.util.Optional;
 
+import com.andresimiquelli.finalfinance.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +26,6 @@ public class UserService {
 	
 	@Autowired
 	private UserRepository repository;
-	
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
 	
 	public static UserSpringSecurity authenticated() {
 		try {
@@ -56,7 +53,7 @@ public class UserService {
 	
 	@Transactional
 	public UserDTO insert(UserPostDTO user) {
-		User newUser = fromDTO(user);
+		User newUser = UserMapper.fromDTO(user);
 		newUser = repository.save(newUser);
 		return new UserDTO(newUser);
 	}
@@ -67,7 +64,7 @@ public class UserService {
 		hasAuthorization(id);
 		
 		User existing = getUser(id);
-		User newUser = updateData(existing, user);
+		User newUser = UserMapper.updateData(existing, user);
 		newUser = repository.save(newUser);
 		return new UserDTO(newUser);
 	}
@@ -76,7 +73,7 @@ public class UserService {
 	public void delete(Integer id) {
 		UserDTO obj = findById(id);
 		obj.setStatus(UserStatus.INACTIVE);
-		repository.save(fromDTO(obj));
+		repository.save(UserMapper.fromDTO(obj));
 	}
 	
 	public UserDTO getAuthenticatedUser() {
@@ -86,38 +83,6 @@ public class UserService {
 		}
 		
 		return new UserDTO(repository.getById(auth.getId()));
-	}
-	
-	private User fromDTO(UserDTO dto) {
-		return new User(
-				dto.getId(), 
-				dto.getName(), 
-				dto.getEmail(), 
-				dto.getPassword(), 
-				dto.getStatus()==null? null : dto.getStatus().getCod());
-	}
-	
-	private User fromDTO(UserPostDTO dto) {
-		return new User(
-				null, 
-				dto.getName(), 
-				dto.getEmail(), 
-				passwordEncoder.encode(dto.getPassword()),
-				UserStatus.ACTIVE.getCod()
-			);
-	}
-	
-	private User updateData(User existing, UserPutDTO user ) {
-		if(user.getName() != null)
-			existing.setName(user.getName());
-		
-		if(user.getPassword() != null)
-			existing.setPassword(passwordEncoder.encode(user.getPassword()));
-		
-		if(user.getStatus() != null)
-			existing.setStatus(user.getStatus());
-		
-		return existing;
 	}
 	
 	private User getUser(Integer id) {

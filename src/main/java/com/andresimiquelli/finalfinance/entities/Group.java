@@ -12,7 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
+@Builder
 @Entity
 @Table(name = "groups")
 public class Group implements Serializable{

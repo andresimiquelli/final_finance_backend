@@ -1,10 +1,7 @@
 package com.andresimiquelli.finalfinance.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.andresimiquelli.finalfinance.entities.User;
 import com.andresimiquelli.finalfinance.entities.enums.UserLevel;
@@ -100,4 +97,16 @@ public class UserDTO implements Serializable{
 		this.levels = levels;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		UserDTO userDTO = (UserDTO) o;
+		return id.equals(userDTO.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

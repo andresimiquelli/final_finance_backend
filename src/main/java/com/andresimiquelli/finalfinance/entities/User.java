@@ -21,7 +21,11 @@ import javax.persistence.Table;
 import com.andresimiquelli.finalfinance.entities.enums.UserLevel;
 import com.andresimiquelli.finalfinance.entities.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User implements Serializable{
@@ -47,12 +51,12 @@ public class User implements Serializable{
 		this.levels.add(UserLevel.COMMON.getCod());
 	}
 
-	public User(Integer id, String name, String email, String password, Integer status) {
+	public User(Integer id, String name, String email, String password, UserStatus status) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.status = status;
+		this.status = status.getCod();
 		this.levels.add(UserLevel.COMMON.getCod());
 	}
 

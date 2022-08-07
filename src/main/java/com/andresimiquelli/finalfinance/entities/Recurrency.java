@@ -15,7 +15,11 @@ import com.andresimiquelli.finalfinance.entities.enums.EntryType;
 import com.andresimiquelli.finalfinance.entities.enums.RecurrencyStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "recurrences")
 public class Recurrency implements Serializable{
